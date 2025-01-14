@@ -17,7 +17,8 @@ class UserGroupSeeder extends Seeder
     {
         UserGroup::truncate();
         DB::table('user_groups')->insert([
-            array('name' => 'Admin','assigned_modules' => '[1, 2,3,4]','status' => NULL,'is_active' => '1')
+            array('name' => 'Admin','assigned_modules' => '[1, 2,3,4]','status' => NULL,'is_active' => '1'),
+            array('name' => 'User','assigned_modules' => '[]','status' => NULL,'is_active' => '1'),
         ]);
     }
 }

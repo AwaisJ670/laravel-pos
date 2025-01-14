@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\UserGroup\UserGroupsController;
 Route::get('/', [AuthController::class, 'loginPage'])->name('login-page');
 // login request
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/phpinfo', function(){
     return phpinfo();
 });

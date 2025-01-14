@@ -111,4 +111,24 @@ class AuthController extends Controller
             return response()->json(['error' => $exception->getMessage()], 500);
         }
     }
+    public function register(Request $request){
+        try {
+            $user=new User();
+
+            $user->first_name=$request->first_name;
+            $user->last_name=$request->last_name;
+            $user->email=$request->email;
+            $user->access_key=md5($request->email . '.' . $request->password );
+            $user->password = bcrypt($request->password);
+            $user->readable_password = $request->password;
+            $user->role_id = 2 ;
+            $user->mobile = $request->mobile;
+
+            $user->save();
+           
+            return redirect()->route('login-page');
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
+    }
 }

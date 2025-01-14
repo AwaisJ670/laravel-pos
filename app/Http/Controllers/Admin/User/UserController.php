@@ -49,11 +49,12 @@ class UserController extends Controller
             $user->access_key=md5($request->email . '.' . $request->password );
             $user->password = bcrypt($request->password);
             $user->readable_password = $request->password;
-            $user->role_id = $request->role_id;
+            $user->role_id = 2 ;
             $user->mobile = $request->mobile;
 
             $user->save();
             $user->load('userGroup');
+            // $user = User::with('userGroup')->find($user->id);
             return response()->json(["message"=> "User Added Successfully",'user' => $user]);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
