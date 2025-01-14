@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Admin Login</title>
+    <title>Login</title>
 
     {{--    Favicon --}}
     {{-- <link rel="icon" href="{{ asset('images/logo.ico') }}"> --}}
@@ -243,7 +243,7 @@
         </div>
     </main>
     <script>
-        //error handeling for form submission if empty 
+        //error handeling for form submission if empty
         document.addEventListener("DOMContentLoaded", function() {
             const name = document.getElementById('name');
             const lastName = document.getElementById('lastName');
@@ -272,7 +272,7 @@
                 signUpPassword,
 
             ];
-            //chagne the input color to red if seelcted empty and not filled 
+            //chagne the input color to red if seelcted empty and not filled
             allInputs.forEach(input => {
                 if (input) { // Check if the input element exists to avoid errors
                     input.addEventListener('focus', () => {
@@ -368,7 +368,7 @@
         });
 
 
-        //Append * to the Labels 
+        //Append * to the Labels
         const labels = document.querySelectorAll("label");
 
         // Loop through each label and append the <sup>*</sup>

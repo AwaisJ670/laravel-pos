@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin\User;
 
 use App\Models\Admin\User;
 use Illuminate\Http\Request;
-use App\Models\Admin\UserGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Role;
 
 class UserController extends Controller
 {
@@ -49,12 +49,12 @@ class UserController extends Controller
             $user->access_key=md5($request->email . '.' . $request->password );
             $user->password = bcrypt($request->password);
             $user->readable_password = $request->password;
-            $user->role_id = 2 ;
+            $user->role_id = $request->role_id;
             $user->mobile = $request->mobile;
 
             $user->save();
-            $user->load('userGroup');
-            // $user = User::with('userGroup')->find($user->id);
+            $user->load('role');
+            // $user = User::with('role')->find($user->id);
             return response()->json(["message"=> "User Added Successfully",'user' => $user]);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
@@ -115,7 +115,7 @@ class UserController extends Controller
             $user->role_id = $request->role_id;
             $user->mobile = $request->mobile;
             $user->save();
-            $user->load('userGroup');
+            $user->load('role');
             return response()->json(["message"=> "User Updated Successfully",'user'=>$user]);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
@@ -140,7 +140,7 @@ class UserController extends Controller
     public function getUsers(){
         try {
             $users=User::select('id','role_id','first_name','last_name','email','is_active')
-                ->with('userGroup')
+                ->with('role')
                 ->where('is_active',1)->get();
             // dd($users);
             return response()->json($users);
@@ -149,13 +149,13 @@ class UserController extends Controller
         }
     }
 
-    public function getUserGroups(){
+    public function getRoles(){
 
         try {
-            $userGroups=UserGroup::where('is_active',1)
+            $roles=Role::where('is_active',1)
                 ->select('id','name')
                 ->get();
-            return response()->json($userGroups);
+            return response()->json($roles);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }

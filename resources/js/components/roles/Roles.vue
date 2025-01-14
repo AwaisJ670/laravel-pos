@@ -8,12 +8,12 @@
                             <div class="card-header">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <h3 class="card-title text-bold text-capitalize">User Groups</h3>
+                                        <h3 class="card-title text-bold text-capitalize">Roles</h3>
                                     </div>
                                     <div class="ml-auto">
                                         <button
                                             class="btn btn-block btn-primary btn-flat btn-sm"
-                                            data-toggle="modal" data-target="#userGroupFormModal"
+                                            data-toggle="modal" data-target="#roleFormModal"
                                             @click="openModal('add', null)"
                                         >
                                             Add
@@ -34,7 +34,7 @@
                                     <thead>
                                         <tr>
                                         <th class="w-rem-2">#</th>
-                                        <th>Group Name</th>
+                                        <th>Role</th>
                                         <th class="w-rem-5 text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -56,7 +56,7 @@
                                                         <button type="button"
                                                             class="btn btn-block btn-outline-info btn-xs action-btn"
                                                             data-toggle="modal"
-                                                            data-target="#userGroupFormModal"
+                                                            data-target="#roleFormModal"
                                                             @click="openModal('edit', obj.id)">
                                                             Edit
                                                         </button>
@@ -65,7 +65,7 @@
                                                         <button type="button"
                                                             class="btn btn-block btn-outline-info btn-xs action-btn"
                                                             data-toggle="modal"
-                                                            data-target="#userPermissionFormModal"
+                                                            data-target="#permissionFormModal"
                                                             @click="openPermissionModal('edit', obj.id)">
                                                             Permissions
                                                         </button>
@@ -73,9 +73,9 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <div class="d-flex justify-content-center">
+                                        <!-- <div class="d-flex justify-content-center">
                                             {{ ResultNotFound }}
-                                        </div>
+                                        </div> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -84,31 +84,31 @@
                 </div>
             </div>
         </section>
-        <user-group-form-modal
-            v-if="is_user_group_form_modal"
+        <role-form-modal
+            v-if="is_role_form_modal"
             :modal_type="modal_type"
             :obj_id="obj_id"
             @close-modal="closeModal">
-        </user-group-form-modal>
-        <user-permission-group-form-modal
+        </role-form-modal>
+        <permission-form-modal
             v-if="is_permission_form_modal"
             :modal_type="modal_type"
             :all_modules="all_modules"
             :obj_id="obj_id"
             @close-modal="closeModal">
-        </user-permission-group-form-modal>
+        </permission-form-modal>
     </div>
 </template>
 
 <script>
 export default {
-    name: "user-groups",
+    name: "roles",
     props: ['all_modules'],
     data() {
         return {
-            userGroups: [],
+            roles: [],
             obj_id: null,
-            is_user_group_form_modal: false,
+            is_role_form_modal: false,
             is_permission_form_modal: false,
             modal_type: null,
             data_loading: false,
@@ -119,21 +119,21 @@ export default {
         openModal(modalType, id) {
             this.modal_type = modalType;
             this.obj_id = id;
-            this.is_user_group_form_modal = true;
+            this.is_role_form_modal = true;
 
         },
-        closeModal(userGroup) {
-            if(this.is_user_group_form_modal){
-                if (this.modal_type == 'add' && userGroup) {
-                    this.userGroups.push(userGroup)
+        closeModal(role) {
+            if(this.is_role_form_modal){
+                if (this.modal_type == 'add' && role) {
+                    this.roles.push(role)
                 }
-                else if (userGroup) {
-                    const index = this.userGroups.findIndex(item => item.id === userGroup.id);
+                else if (role) {
+                    const index = this.roles.findIndex(item => item.id === role.id);
                     if (index !== -1) {
-                        Vue.set(this.userGroups, index, userGroup);
+                        Vue.set(this.roles, index, role);
                     }
                 }
-                this.is_user_group_form_modal = false;
+                this.is_role_form_modal = false;
             }
             else if(this.is_permission_form_modal){
                 this.is_permission_form_modal=false
@@ -152,12 +152,12 @@ export default {
         getData() {
             this.data_loading = true
             axios({
-                url: `/admin/user-groups/get/server/data`,
+                url: `/admin/roles/get/server/data`,
                 method: 'GET',
             })
             .then(response => {
                 this.data_loading = false
-                this.userGroups = response.data
+                this.roles = response.data
             })
             .catch(error => {
                 this.errorToast(error.response.error)
@@ -168,7 +168,7 @@ export default {
        filterData() {
             let filterData = null;
             if (this.search !== '') {
-                filterData = this.userGroups.filter((obj) => {
+                filterData = this.roles.filter((obj) => {
                     return this.search.toLowerCase().split(' ').every(v =>
                         obj.name.toLowerCase().includes(v)
                     );
@@ -177,7 +177,7 @@ export default {
                 return filterData;
             }
             else {
-                return this.userGroups;
+                return this.roles;
             }
         },
     },

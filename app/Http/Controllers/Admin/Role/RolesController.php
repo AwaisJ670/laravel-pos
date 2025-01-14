@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin\UserGroup;
+namespace App\Http\Controllers\Admin\Role;
 
 use stdClass;
 use Illuminate\Http\Request;
 use App\Models\Admin\Modules;
-use App\Models\Admin\UserGroup;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ApiController;
+use App\Models\Admin\Role;
 
-class UserGroupsController extends ApiController
+class RolesController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +20,7 @@ class UserGroupsController extends ApiController
     {
         $allModules = Modules::select('id', 'name', 'parent_id')->get();
 
-        return view('Admin.user-groups.index', [
+        return view('Admin.roles.index', [
             'all_modules' => $allModules
         ]);
     }
@@ -45,13 +45,13 @@ class UserGroupsController extends ApiController
     {
         try {
 
-            $userGroup = new UserGroup();
+            $role = new Role();
 
-            $userGroup->name = $request->name;
+            $role->name = $request->name;
 
-            $userGroup->save();
+            $role->save();
 
-            return response()->json(['message' => 'User Group added successfully','userGroup' =>$userGroup ], 201);
+            return response()->json(['message' => 'Role added successfully','role' =>$role ], 201);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -77,8 +77,8 @@ class UserGroupsController extends ApiController
     public function edit($id)
     {
         try {
-            $userGroup = UserGroup::findOrFail($id);
-            return response()->json($userGroup, 200);
+            $role = Role::findOrFail($id);
+            return response()->json($role, 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -94,13 +94,13 @@ class UserGroupsController extends ApiController
     public function update(Request $request, $id)
     {
         try {
-            $userGroup = UserGroup::findOrFail($id);
+            $role = Role::findOrFail($id);
 
-            $userGroup->name = $request->name;
+            $role->name = $request->name;
 
-            $userGroup->save();
+            $role->save();
 
-            return response()->json(['message' => 'User Group updated successfully','userGroup' =>$userGroup], 200);
+            return response()->json(['message' => 'Role updated successfully','role' =>$role], 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -120,7 +120,7 @@ class UserGroupsController extends ApiController
     public function getServerData()
     {
         try {
-            $data = UserGroup::select('id', 'name','is_active')
+            $data = Role::select('id', 'name','is_active')
             ->orderBy('name', 'asc')
             ->get();
 
@@ -147,11 +147,11 @@ class UserGroupsController extends ApiController
     public function updateIsActive(Request $request, $id)
     {
         try {
-            UserGroup::whereId($id)->update([
+            Role::whereId($id)->update([
                 'is_active' => $request->status
             ]);
 
-            return response()->json(['message' => 'User Group status updated successfully'], 200);
+            return response()->json(['message' => 'Role status updated successfully'], 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -159,10 +159,10 @@ class UserGroupsController extends ApiController
     public function updateUserPermissions(Request $request,$groupId){
         try {
 
-            $userGroup=UserGroup::findOrFail($groupId);
-            $userGroup->assigned_modules = $request->selectedModules; // Encode as JSON
-            $userGroup->save();
-            return response()->json(['message' => 'User Group Permission updated successfully'], 200);
+            $role=Role::findOrFail($groupId);
+            $role->permissions = $request->permissions; // Encode as JSON
+            $role->save();
+            return response()->json(['message' => 'Role Permission updated successfully'], 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -170,10 +170,10 @@ class UserGroupsController extends ApiController
     public function saveUserPermissions(Request $request){
         try {
             // dd($request->all());
-            $userGroup=UserGroup::findOrFail($request->name);
-            $userGroup->assigned_modules = $request->selectedModules; // Encode as JSON
-            $userGroup->save();
-            return response()->json(['message' => 'User Group Permission updated successfully'], 200);
+            $role=Role::findOrFail($request->name);
+            $role->permissions = $request->permissions; // Encode as JSON
+            $role->save();
+            return response()->json(['message' => 'Role Permission updated successfully'], 200);
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);
         }

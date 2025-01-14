@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="modal fade" id="userPermissionFormModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal fade" id="permissionFormModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog modal-xl">
                 <form @submit.prevent="save">
                     <div class="modal-content">
@@ -15,19 +15,19 @@
                                 <div class="row">
                                     <div class="col-12" v-if="this.modal_type == 'add'">
                                         <div class="form-group">
-                                            <label class="mb-0">Group Name:</label>
+                                            <label class="mb-0">Role:</label>
                                             <select class="form-control mr-2" v-model="form_data.name" >
-                                                <option value="" disabled selected>-- Choose Group Name --</option>
-                                                <option v-for="obj in groups" :key="obj.id" :value="obj.id">
+                                                <option value="" disabled selected>-- Choose Role --</option>
+                                                <option v-for="obj in roles" :key="obj.id" :value="obj.id">
                                                 <span class="svg-bg-airport"></span>{{ obj.name }}
                                                 </option>
                                             </select>
-                                            <p class="is-invalid-text" v-if="!$v.form_data.name.required">Group Name is required</p>
+                                            <p class="is-invalid-text" v-if="!$v.form_data.name.required">Role is required</p>
                                         </div>
                                     </div>
                                     <div class="col-12" v-else>
                                         <div class="form-group">
-                                            <label class="mb-0">Group Name:</label>
+                                            <label class="mb-0">Role:</label>
                                             <span class="ml-2  text-success">{{ form_data.name }}</span>
                                         </div>
                                     </div>
@@ -35,21 +35,21 @@
                                 <div v-for="parentModule in all_modules.filter(module => !module.parent_id)" :key="parentModule.id">
                                     <div class="module-checkbox">
                                         <label>
-                                            <input type="checkbox" :value="parentModule.id" v-model="form_data.selectedModules" />
+                                            <input type="checkbox" :value="parentModule.id" v-model="form_data.permissions" />
                                             {{ parentModule.name }}
                                         </label>
                                     </div>
                                     <br>
                                     <div v-for="childModule in all_modules.filter(module => module.parent_id === parentModule.id)" :key="childModule.id" class="module-checkbox pl-5">
                                         <p>
-                                            <input type="checkbox" :value="childModule.id" v-model="form_data.selectedModules" @change="updateParentSelection(parentModule.id)" />
+                                            <input type="checkbox" :value="childModule.id" v-model="form_data.permissions" @change="updateParentSelection(parentModule.id)" />
                                             {{ childModule.name }}
                                         </p>
                                     </div>
                                 </div>
 
-                                <p class="is-invalid-text" v-if="!$v.form_data.selectedModules.required">Modules are required</p>
-                                <!-- <span>Selected Modules {{ form_data.selectedModules }}</span> -->
+                                <p class="is-invalid-text" v-if="!$v.form_data.permissions.required">Modules are required</p>
+                                <!-- <span>Selected Modules {{ form_data.permissions }}</span> -->
                             </div>
                         </div>
                         <div class="modal-footer border-top border-primary">
@@ -72,7 +72,7 @@
 <script>
 import { required } from 'vuelidate/lib/validators';
 export default {
-    name: 'user-permission-group-form-modal',
+    name: 'permission-form-modal',
     props: [
         'modal_type', 'obj_id', 'all_modules'
     ],
@@ -80,26 +80,26 @@ export default {
         return {
             form_data: {
                 name: '',
-                selectedModules: [],
+                permissions: [],
             },
             crud_loading: false,
             data_loading: false,
             is_all_select: false,
             formData: [],
-            groups:[]
+            roles:[]
         }
     },
     validations: {
         form_data: {
             name: {required},
-            selectedModules: {required},
+            permissions: {required},
         }
     },
     methods: {
         save() {
             this.crud_loading = true;
 
-            let url = this.modal_type === 'add' ? `/admin/user-groups/permissions` : `/admin/user-groups/permissions/${this.obj_id}`;
+            let url = this.modal_type === 'add' ? `/admin/roles/permissions` : `/admin/roles/permissions/${this.obj_id}`;
             let method = 'POST';
             axios({
                 url: url,
@@ -116,12 +116,11 @@ export default {
         },
         getDataForEdit() {
             axios({
-                url: `/admin/user-groups/${this.obj_id}/edit`,
+                url: `/admin/roles/${this.obj_id}/edit`,
                 method: 'GET',
             })
             .then(response => {
-                this.form_data.name = response.data.user_group.name
-                this.form_data.selectedModules = response.data.user_group.assigned_modules ? response.data.user_group.assigned_modules : this.form_data.selectedModules
+                this.form_data =response.data
             })
             .catch(error => {
                 this.errorToast(error.response.error)
@@ -130,12 +129,12 @@ export default {
         getData() {
             this.data_loading = true
             axios({
-                url: `/admin/user-groups/get/server/data`,
+                url: `/admin/roles/get/server/data`,
                 method: 'GET',
             })
             .then(response => {
                 this.data_loading = false
-                this.groups = response.data
+                this.roles = response.data
             })
             .catch(error => {
                 this.errorToast(error.response.error)
@@ -145,19 +144,19 @@ export default {
             return this.all_modules.some((module) => module.parent_id === parentId);
         },
         updateParentSelection(parentId) {
-            const childrenSelected = this.form_data.selectedModules.filter(moduleId =>
+            const childrenSelected = this.form_data.permissions.filter(moduleId =>
                 this.all_modules.some(module => module.parent_id === parentId && module.id === moduleId)
             );
 
-            const parentIndex = this.form_data.selectedModules.indexOf(parentId);
+            const parentIndex = this.form_data.permissions.indexOf(parentId);
 
             if (childrenSelected.length === 0) {
                 if (parentIndex !== -1) {
-                    this.form_data.selectedModules.splice(parentIndex, 1);
+                    this.form_data.permissions.splice(parentIndex, 1);
                 }
             } else {
                 if (parentIndex === -1) {
-                    this.form_data.selectedModules.push(parentId);
+                    this.form_data.permissions.push(parentId);
                 }
             }
         }

@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div class="modal fade" id="userGroupFormModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal fade" id="roleFormModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog">
                 <form @submit.prevent="save">
                     <div class="modal-content">
                         <div class="modal-header align-items-center">
-                            <h3 class="card-title text-bold text-capitalize form-title">{{ modal_type }} User Group</h3>
+                            <h3 class="card-title text-bold text-capitalize form-title">{{ modal_type }} Role</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="$emit('close-modal')">
                                 <span aria-hidden="true">×</span>
                             </button>
@@ -17,11 +17,11 @@
                                         <div class="form-group">
                                             <label class="mb-0">
                                                 <span v-if="!$v.form_data.name.required">*</span>
-                                                Group Name</label>
+                                                Role</label>
                                             <input
                                                 type="text"
-                                                name="Group Name"
-                                                placeholder="Group Name"
+                                                name="Role"
+                                                placeholder="Role"
                                                 v-model="form_data.name"
                                                 required
                                                 :class="['form-control', {'is-invalid no-icon': (!$v.form_data.name.required)}]"
@@ -53,7 +53,7 @@ import { required } from 'vuelidate/lib/validators';
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
-    name: 'user-group-form-modal',
+    name: 'role-form-modal',
     props: [
         'modal_type', 'obj_id'
     ],
@@ -68,12 +68,6 @@ export default {
             data_loading: false,
             is_all_select: false,
             formData: [],
-            normalizer(node) {
-                return {
-                    id: node.id,
-                    label: node.name,
-                }
-            },
         }
     },
     validations: {
@@ -84,8 +78,7 @@ export default {
     methods: {
         save() {
             this.crud_loading = true;
-
-            let url = this.modal_type === 'add' ? `/admin/user-groups` : `/admin/user-groups/${this.obj_id}`;
+            let url = this.modal_type === 'add' ? `/admin/roles` : `/admin/roles/${this.obj_id}`;
             let method = this.modal_type === 'add' ? 'POST' : 'PUT';
 
             axios({
@@ -103,7 +96,7 @@ export default {
         },
         getDataForEdit() {
             axios({
-                url: `/admin/user-groups/${this.obj_id}/edit`,
+                url: `/admin/roles/${this.obj_id}/edit`,
                 method: 'GET',
             })
             .then(response => {

@@ -14,10 +14,10 @@ Vue.component('sidebar-component', require('./components/includes/SidebarCompone
 Vue.component('users', require('./components/users/Users.vue').default);
 Vue.component('user-form-modal-component', require('./components/users/UserFormModalComponent.vue').default);
 Vue.component('user-profile', require('./components/users/UserProfileComponent.vue').default);
-// .................................User Group Components..................................................
-Vue.component('user-groups', require('./components/user-groups/UserGroups.vue').default);
-Vue.component('user-group-form-modal', require('./components/user-groups/UserGroupFormModal.vue').default);
-Vue.component('user-permission-group-form-modal', require('./components/user-groups/UserPermissionFormModal.vue').default);
+// .................................Roles Components..................................................
+Vue.component('roles', require('./components/roles/Roles.vue').default);
+Vue.component('role-form-modal', require('./components/roles/RoleFormModal.vue').default);
+Vue.component('permission-form-modal', require('./components/roles/PermissionFormModal.vue').default);
 
 
 //.........................................................................

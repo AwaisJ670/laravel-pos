@@ -1,9 +1,9 @@
 @extends('master')
-@section('title') {{ 'User Groups' }}@endsection
+@section('title') {{ 'Roles' }}@endsection
 @section('content')
     <div class="content-wrapper">
-        <user-groups
+        <roles
         :all_modules="{{ $all_modules }}"
-    ></user-groups>
+        ></roles>
     </div>
 @endsection

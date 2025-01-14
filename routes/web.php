@@ -2,8 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\Role\RolesController;
 use App\Http\Controllers\Admin\User\UserController;
-use App\Http\Controllers\Admin\UserGroup\UserGroupsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -30,7 +30,7 @@ Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
     Route::view('/dashboard', 'dashboard')->name('dashboard')->middleware('module.check');
     Route::get('/welcome', [AuthController::class, 'afterLogin'])->name('afterLogin');
     //change password
-    Route::get('/change-password', [AuthController::class, 'changePasswordPage'])->name('change-password')->middleware('module.check');
+    Route::get('/change-password', [AuthController::class, 'changePasswordPage'])->name('change-password');
     Route::post('/check-password', [AuthController::class, 'checkPassword']);
     Route::post('/update-password', [AuthController::class, 'updatePassword']);
 
@@ -38,20 +38,20 @@ Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
     Route::resource('users', UserController::class)->except(['index']);
     Route::get('users', [UserController::class, 'index'])->middleware('module.check');
     Route::get('/users/get/data', [UserController::class, 'getUsers']);
-    Route::get('/get/user-groups', [UserController::class, 'getUserGroups']);
+    Route::get('/get/roles', [UserController::class, 'getRoles']);
 
      //user profile
     Route::get('/user-profile', [AuthController::class, 'userProfilePage'])->name('user-profile');
     Route::post('/user-profile/update', [AuthController::class, 'userProfileUpdate']);
 
     //User Groups
-    Route::resource('user-groups', UserGroupsController::class)->except(['index']);
-    Route::get('user-groups', [UserGroupsController::class, 'index'])->middleware('module.check');
-    Route::get('/user-groups/get/server/data', [UserGroupsController::class, 'getServerData']);
-    Route::get('/user-group/get/form/data', [UserGroupsController::class, 'getFormData']);
-    Route::post('/user-groups/update/is-active/{id}', [UserGroupsController::class, 'updateIsActive']);
-    Route::post('/user-groups/permissions/{groupId}', [UserGroupsController::class, 'updateUserPermissions']);
-    Route::post('/user-groups/permissions', [UserGroupsController::class, 'saveUserPermissions']);
+    Route::resource('roles', RolesController::class)->except(['index']);
+    Route::get('roles', [RolesController::class, 'index'])->middleware('module.check');
+    Route::get('/roles/get/server/data', [RolesController::class, 'getServerData']);
+    Route::get('/user-group/get/form/data', [RolesController::class, 'getFormData']);
+    Route::post('/roles/update/is-active/{id}', [RolesController::class, 'updateIsActive']);
+    Route::post('/roles/permissions/{groupId}', [RolesController::class, 'updateUserPermissions']);
+    Route::post('/roles/permissions', [RolesController::class, 'saveUserPermissions']);
 
 
 });

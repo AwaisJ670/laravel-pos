@@ -3,7 +3,7 @@
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use App\Models\Admin\Modules;
-use App\Models\Admin\UserGroup;
+use App\Models\Admin\Role;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -31,7 +31,7 @@ function getModulesWithChildModules()
 function getUserPermissionModules()
 {
     $user = Auth::user();
-    $userPermission = UserGroup::where('id', $user->role_id)->pluck('assigned_modules')->first();
+    $userPermission = Role::where('id', $user->role_id)->pluck('permissions')->first();
     $modules = Modules::whereIn('id',  $userPermission)->orderBy('order','ASC')->get();
 
     return $modules;

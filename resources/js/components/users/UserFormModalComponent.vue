@@ -53,10 +53,10 @@
                             </div>
                             <div class="col-xl-6 col-lg-6 col-md-6">
                                 <div class="form-group">
-                                    <label class="mb-0">Select User Group  <span v-if="!$v.form_data.role_id.required">*</span></label>
+                                    <label class="mb-0">Select Role  <span v-if="!$v.form_data.role_id.required">*</span></label>
                                     <select class="form-control" v-model="form_data.role_id">
-                                        <option value="" selected disabled>--Select User Group--</option>
-                                        <option v-for="users in userGroups" :key="users.id" :value="users.id">
+                                        <option value="" selected disabled>--Select Role--</option>
+                                        <option v-for="users in roles" :key="users.id" :value="users.id">
                                             {{ users.name }}
                                         </option>
                                     </select>
@@ -102,7 +102,7 @@ export default {
                 mobile: '',
                 password: '',
             },
-            userGroups: [],
+            roles: [],
             data_loading: false,
             showPassword: false,
             crud_loading: false,
@@ -152,15 +152,15 @@ export default {
                     this.errorToast(error.response.statusText)
                 })
         },
-        getUsersGroups() {
+        getRoles() {
             this.data_loading = true
             axios({
-                url: `/admin/get/user-groups`,
+                url: `/admin/get/roles`,
                 method: 'GET',
             })
                 .then(response => {
                     this.data_loading = false
-                    this.userGroups = response.data
+                    this.roles = response.data
                 })
                 .catch(error => {
                     this.errorToast(error.response.statusText)
@@ -171,7 +171,7 @@ export default {
         },
     },
     mounted() {
-        this.getUsersGroups()
+        this.getRoles()
         if (this.modal_type === 'edit') {
             this.getDataForEdit();
         }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2c35d37424d2e286735576d62296e2c3",
+    "content-hash": "f674b425d639d171b05c472082c47b8f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -190,6 +190,65 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "codebider/generate-crud",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AwaisJ670/laravel-crud-bot.git",
+                "reference": "14054f485a3908a728191e372119016a33ac5ed6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AwaisJ670/laravel-crud-bot/zipball/14054f485a3908a728191e372119016a33ac5ed6",
+                "reference": "14054f485a3908a728191e372119016a33ac5ed6",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5|^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "CodeBider\\GenerateCrud\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "CodeBider\\GenerateCrud\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Awais Javaid",
+                    "email": "info.awaisjavaid@gmail.com"
+                }
+            ],
+            "description": "An artisan command to automate the migration,model,resource controller, views and routes",
+            "keywords": [
+                "crud",
+                "crud bot",
+                "crud generator",
+                "laravel",
+                "laravel crud generator",
+                "laravel package"
+            ],
+            "support": {
+                "issues": "https://github.com/AwaisJ670/laravel-crud-bot/issues",
+                "source": "https://github.com/AwaisJ670/laravel-crud-bot/tree/v0.0.1"
+            },
+            "time": "2025-01-08T20:15:53+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -8821,5 +8880,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

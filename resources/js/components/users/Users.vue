@@ -30,7 +30,7 @@
                                             <tr>
                                                 <th class="w-rem-10">Name</th>
                                                 <th class="w-rem-10">Email</th>
-                                                <th class="w-rem-10">Roles</th>
+                                                <th class="w-rem-10">Role</th>
                                                 <th class="w-rem-4">Action</th>
                                             </tr>
                                         </thead>
@@ -38,7 +38,7 @@
                                             <tr v-for="(obj ,index) in users" :key="obj.id" :class="{'tbl-selected-row': (obj.id == obj_id)}">
                                                 <td>{{ obj.first_name }} {{ obj.last_name }}</td>
                                                 <td>{{ obj.email }}</td>
-                                                <td>{{ obj.user_group? obj.user_group.name:'' }}</td>
+                                                <td>{{ obj.role ? obj.role.name:'' }}</td>
                                                 <td class="text-center table-action-buttons">
                                                     <button type="button"
                                                         class="btn btn-outline-primary btn-xs dropdown-toggle dropdown-icon datatable-action-btn"

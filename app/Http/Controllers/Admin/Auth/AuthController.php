@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin\Auth;
 
 use App\Models\Admin\User;
 use Illuminate\Http\Request;
-use App\Models\Admin\UserGroup;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -32,7 +32,7 @@ class AuthController extends Controller
 
             if ($user->is_active == 1) {
 
-                $assignedModulesToUser = UserGroup::where('id', $user->role_id)->pluck('assigned_modules')->first();
+                $assignedModulesToUser = Role::where('id', $user->role_id)->pluck('permissions')->first();
 
                 User::whereId(Auth::id())->update([
                     'last_login' => Carbon::now(),
@@ -121,11 +121,11 @@ class AuthController extends Controller
             $user->access_key=md5($request->email . '.' . $request->password );
             $user->password = bcrypt($request->password);
             $user->readable_password = $request->password;
-            $user->role_id = 2 ;
+            $user->role_id = 2;
             $user->mobile = $request->mobile;
 
             $user->save();
-           
+
             return redirect()->route('login-page');
         } catch (\Exception $exception) {
             return response()->json(['error' => $exception->getMessage()], 500);

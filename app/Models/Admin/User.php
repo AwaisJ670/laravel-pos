@@ -2,7 +2,7 @@
 
 namespace App\Models\Admin;
 
-use App\Models\Admin\UserGroup;
+use App\Models\Admin\Role;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,8 +25,8 @@ class User extends Authenticatable
     ];
 
 
-    public function userGroup(){
-        return $this->belongsTo(UserGroup::class , 'role_id','id')->select('id','name');
+    public function role(){
+        return $this->belongsTo(Role::class , 'role_id','id')->select('id','name');
     }
     /**
      * The attributes that should be hidden for arrays.

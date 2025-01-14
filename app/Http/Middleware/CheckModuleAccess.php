@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\Models\Admin\Modules;
-use App\Models\Admin\UserGroup;
+use App\Models\Admin\Role;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +26,7 @@ class CheckModuleAccess
 
         $module=Modules::where('route', $route)->pluck('id')->first();
 
-        $assignedModules = UserGroup::where('id', Auth::user()->role_id)->pluck('assigned_modules')->first();
+        $assignedModules = Role::where('id', Auth::user()->role_id)->pluck('permissions')->first();
 
 
         if (!in_array($module, $assignedModules, true)) {
