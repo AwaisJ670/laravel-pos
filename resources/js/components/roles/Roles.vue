@@ -3,7 +3,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="row">
-                     <div class="col-lg-12 col-md-12">
+                    <div class="col-lg-12 col-md-12">
                         <div class="card mt-4">
                             <div class="card-header">
                                 <div class="d-flex align-items-center">
@@ -11,31 +11,28 @@
                                         <h3 class="card-title text-bold text-capitalize">Roles</h3>
                                     </div>
                                     <div class="ml-auto">
-                                        <button
-                                            class="btn btn-block btn-primary btn-flat btn-sm"
-                                            data-toggle="modal" data-target="#roleFormModal"
-                                            @click="openModal('add', null)"
-                                        >
+                                        <button class="btn btn-primary btn-sm rounded-lg" data-toggle="modal"
+                                            data-target="#roleFormModal" @click="openModal('add', null)">
                                             Add
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-group">
-                                                <label class="mb-0">Search</label>
-                                                <input type="text" class="form-control" v-model="search">
-                                            </div>
+                                <div class="row">
+                                    <div class="col-12 mb-3">
+                                        <div class="form-group">
+                                            <label class="mb-0">Search</label>
+                                            <input type="text" class="form-control" v-model="search" />
                                         </div>
                                     </div>
-                                    <table id="table" class="table table-sm table-bordered w-100 table-hover">
+                                </div>
+                                <table id="table" class="table table-sm table-smtable-hover">
                                     <thead>
                                         <tr>
-                                        <th class="w-rem-2">#</th>
-                                        <th>Role</th>
-                                        <th class="w-rem-5 text-center">Action</th>
+                                            <th class="w-rem-2">#</th>
+                                            <th>Role</th>
+                                            <th class="w-rem-5 text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -43,39 +40,29 @@
                                             <td>{{ index + 1 }}</td>
                                             <td>{{ obj.name }}</td>
                                             <td class="text-center table-action-buttons">
-                                                <button type="button"
-                                                    class="btn btn-outline-primary btn-xs dropdown-toggle dropdown-icon datatable-action-btn"
-                                                    data-toggle="dropdown"
-                                                    aria-expanded="false"
-                                                    aria-haspopup="false"
-                                                    @click="obj_id = obj.id"
-                                                >
-                                                </button>
+                                                <button type="button" class="btn btn-xs dropdown-toggle dropdown-icon"
+                                                    data-toggle="dropdown" aria-expanded="false" aria-haspopup="false"
+                                                    @click="obj_id = obj.id"></button>
                                                 <div class="dropdown-menu">
                                                     <div class="mb-2">
                                                         <button type="button"
-                                                            class="btn btn-block btn-outline-info btn-xs action-btn"
-                                                            data-toggle="modal"
-                                                            data-target="#roleFormModal"
+                                                            class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left"
+                                                            data-toggle="modal" data-target="#roleFormModal"
                                                             @click="openModal('edit', obj.id)">
-                                                            Edit
+                                                            <i class="fas fa-edit px-3"></i>Edit
                                                         </button>
                                                     </div>
                                                     <div class="mb-2">
                                                         <button type="button"
-                                                            class="btn btn-block btn-outline-info btn-xs action-btn"
-                                                            data-toggle="modal"
-                                                            data-target="#permissionFormModal"
+                                                            class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left"
+                                                            data-toggle="modal" data-target="#permissionFormModal"
                                                             @click="openPermissionModal('edit', obj.id)">
-                                                            Permissions
+                                                            <i class="fas fa-clipboard-list px-3"></i>Permissions
                                                         </button>
                                                     </div>
                                                 </div>
                                             </td>
                                         </tr>
-                                        <!-- <div class="d-flex justify-content-center">
-                                            {{ ResultNotFound }}
-                                        </div> -->
                                     </tbody>
                                 </table>
                             </div>
@@ -84,18 +71,10 @@
                 </div>
             </div>
         </section>
-        <role-form-modal
-            v-if="is_role_form_modal"
-            :modal_type="modal_type"
-            :obj_id="obj_id"
-            @close-modal="closeModal">
+        <role-form-modal v-if="is_role_form_modal" :modal_type="modal_type" :obj_id="obj_id" @close-modal="closeModal">
         </role-form-modal>
-        <permission-form-modal
-            v-if="is_permission_form_modal"
-            :modal_type="modal_type"
-            :all_modules="all_modules"
-            :obj_id="obj_id"
-            @close-modal="closeModal">
+        <permission-form-modal v-if="is_permission_form_modal" :modal_type="modal_type" :all_modules="all_modules"
+            :obj_id="obj_id" @close-modal="closeModal">
         </permission-form-modal>
     </div>
 </template>
@@ -103,7 +82,7 @@
 <script>
 export default {
     name: "roles",
-    props: ['all_modules'],
+    props: ["all_modules"],
     data() {
         return {
             roles: [],
@@ -112,83 +91,75 @@ export default {
             is_permission_form_modal: false,
             modal_type: null,
             data_loading: false,
-            search: '',
-        }
+            search: "",
+        };
     },
     methods: {
         openModal(modalType, id) {
             this.modal_type = modalType;
             this.obj_id = id;
             this.is_role_form_modal = true;
-
         },
         closeModal(role) {
-            if(this.is_role_form_modal){
-                if (this.modal_type == 'add' && role) {
-                    this.roles.push(role)
-                }
-                else if (role) {
-                    const index = this.roles.findIndex(item => item.id === role.id);
+            if (this.is_role_form_modal) {
+                if (this.modal_type == "add" && role) {
+                    this.roles.push(role);
+                } else if (role) {
+                    const index = this.roles.findIndex((item) => item.id === role.id);
                     if (index !== -1) {
                         Vue.set(this.roles, index, role);
                     }
                 }
                 this.is_role_form_modal = false;
-            }
-            else if(this.is_permission_form_modal){
-                this.is_permission_form_modal=false
+            } else if (this.is_permission_form_modal) {
+                this.is_permission_form_modal = false;
             }
             this.modal_type = null;
             this.obj_id = null;
 
             $(".modal-backdrop").remove();
-            $("body").removeClass('modal-open');
+            $("body").removeClass("modal-open");
         },
-        openPermissionModal(modalType, id){
+        openPermissionModal(modalType, id) {
             this.modal_type = modalType;
             this.obj_id = id;
             this.is_permission_form_modal = true;
         },
         getData() {
-            this.data_loading = true
+            this.data_loading = true;
             axios({
                 url: `/admin/roles/get/server/data`,
-                method: 'GET',
+                method: "GET",
             })
-            .then(response => {
-                this.data_loading = false
-                this.roles = response.data
-            })
-            .catch(error => {
-                this.errorToast(error.response.error)
-            })
+                .then((response) => {
+                    this.data_loading = false;
+                    this.roles = response.data;
+                })
+                .catch((error) => {
+                    this.errorToast(error.response.error);
+                });
         },
     },
     computed: {
-       filterData() {
+        filterData() {
             let filterData = null;
-            if (this.search !== '') {
+            if (this.search !== "") {
                 filterData = this.roles.filter((obj) => {
-                    return this.search.toLowerCase().split(' ').every(v =>
-                        obj.name.toLowerCase().includes(v)
-                    );
+                    return this.search
+                        .toLowerCase()
+                        .split(" ")
+                        .every((v) => obj.name.toLowerCase().includes(v));
                 });
 
                 return filterData;
-            }
-            else {
+            } else {
                 return this.roles;
             }
         },
     },
     mounted() {
         this.getData();
-    }
-}
+    },
+};
 </script>
-<style scoped>
- .module-create-button{
-    width: 9rem;
- }
-</style>
-
+<style scoped></style>

@@ -5,7 +5,7 @@
                 <form @submit.prevent="save">
                     <div class="modal-content">
                         <div class="modal-header align-items-center">
-                            <h3 class="card-title text-bold text-capitalize form-title">{{ modal_type }} User Group Permissions</h3>
+                            <h3 class="card-title text-bold text-capitalize form-title">{{ modal_type }} Permissions</h3>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="$emit('close-modal')">
                                 <span aria-hidden="true">×</span>
                             </button>
@@ -54,7 +54,7 @@
                         </div>
                         <div class="modal-footer border-top border-primary">
                         <button type="submit"
-                            class="btn btn-block btn-primary btn-flat btn-sm ml-auto"
+                            class="btn btn-primary"
                             :disabled="$v.$invalid || data_loading || crud_loading"
                         >
                             <span v-if="modal_type === 'add' && !crud_loading">Create</span>

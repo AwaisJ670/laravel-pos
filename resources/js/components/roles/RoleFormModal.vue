@@ -33,7 +33,7 @@
                         </div>
                         <div class="modal-footer border-top border-primary">
                             <button type="submit"
-                                class="btn btn-block btn-primary btn-flat btn-sm ml-auto"
+                                class="btn btn-primary"
                                 :disabled="$v.$invalid || data_loading || crud_loading"
                             >
                                 <span v-if="modal_type === 'add' && !crud_loading">Create</span>
@@ -88,7 +88,7 @@ export default {
             })
             .then(response => {
                 this.successToast(response.data.message);
-                this.$emit('close-modal',response.data.userGroup)
+                this.$emit('close-modal',response.data.role)
             })
             .catch(error => {
                 this.errorToast(error.response.error)
