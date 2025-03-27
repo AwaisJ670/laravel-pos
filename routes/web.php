@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
 use App\Http\Controllers\Admin\Role\RolesController;
+use App\Http\Controllers\Admin\Sale\SaleController;
 use App\Http\Controllers\Admin\User\UserController;
 /*
 |--------------------------------------------------------------------------
@@ -65,4 +66,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     Route::get('/get/categories', [CategoryController::class, 'getCategories']);
 
 
+    // Sale
+
+    Route::resource('sales', SaleController::class)->except(['index']);
+    
 });

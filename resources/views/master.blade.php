@@ -20,6 +20,9 @@
         {{-- Custom CSS --}}
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
         {{-- <link rel="stylesheet" href="{{ mix('css/custom.css') }}"> --}}
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     </head>
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
         <div class="wrapper" id="app">
