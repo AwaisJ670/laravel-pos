@@ -252,6 +252,10 @@ Vue.mixin({
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-        }
+        },
+        decimalPlacesIfNumberContains(number) {
+            if (!number && number !== 0) return ""; // Handle empty or undefined cases
+            return number % 1 === 0 ? number : parseFloat(number).toFixed(2);
+        },
     }
 });

@@ -60,6 +60,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     Route::get('products', [ProductController::class, 'index'])->middleware('module.check');
     Route::post('/upload/product/image/{id}',[ProductController::class,'uploadProductImage']);
     Route::get('/get/products',[ProductController::class,'getProducts']);
+    Route::get('/get/optimized/products',[ProductController::class,'getOptimizedProducts']);
 
     Route::resource('categories', CategoryController::class)->except(['index']);
     Route::get('categories', [CategoryController::class, 'index'])->middleware('module.check');

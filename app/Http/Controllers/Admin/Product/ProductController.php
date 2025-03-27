@@ -182,5 +182,14 @@ class ProductController extends Controller
 
         return response()->json($products);            
     }
+    public function getOptimizedProducts(){
+        $products = Product::select('id','name','category_id','code','price','stock')
+                    ->with('category:id,name')
+                    ->where('is_active',1)
+                    ->where('stock' ,'>',0)
+                    ->get();
+
+        return response()->json($products);            
+    }
 
 }

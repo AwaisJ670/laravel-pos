@@ -70,6 +70,10 @@ Vue.component(
     "pagination-component",
     require("./components/util/PaginationComponent.vue").default
 );
+Vue.component(
+    "search-bar",
+    require("./components/util/SearchBar.vue").default
+);
 
 //Category
 
@@ -89,4 +93,11 @@ Vue.component(
     "sale-panel",
     require("./components/sales/SalePannel.vue").default
 );
-
+Vue.component(
+    "product-table",
+    require("./components/sales/productTable.vue").default
+);
+Vue.component(
+    "customer-modal",
+    require("./components/sales/CustomerModal.vue").default
+);

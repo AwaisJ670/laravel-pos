@@ -11,87 +11,46 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="productSearch" class="form-label">Search Product (by Name)</label>
-                                        <input type="text" id="productSearch" class="form-control"
-                                            placeholder="Enter product name">
+                                <div class="form-row">
+                                    <div class="col-md-3">
+                                        <label for="productSearch" class="form-label">Search Product (by Name and Code)</label>
+                                        <search-bar
+                                            ref="searchBar"
+                                            :is_barcode_mode="is_barcode_mode"
+                                            :searchedData="products"
+                                            :searchBy="['name', 'code']"
+                                            :label="label"
+                                            @selectedObj="getSelectedProduct"
+                                        />
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="productCodeSearch" class="form-label">Search Product (by
-                                            Code)</label>
-                                        <input type="text" id="productCodeSearch" class="form-control"
-                                            placeholder="Enter product code">
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 align-items-end mt-1">
-                                    <div class="col-md-3 col-12">
-                                        <label for="name" class="form-label">Name</label>
-                                        <input type="text" id="name" class="form-control" placeholder="Name" readonly>
-                                    </div>
-                                    <div class="col-md-2 col-6">
-                                        <label for="unitPrice" class="form-label">Category</label>
-                                        <input type="text" steps="any" id="category" class="form-control"
-                                            placeholder="Price">
-                                    </div>
-                                    <div class="col-md-1 col-6">
+                                    <!-- <div class="col-md-1 col-6">
                                         <label for="units" class="form-label">Stock</label>
                                         <input type="number" steps="any" id="units" class="form-control"
-                                            placeholder="Units" readonly>
-                                    </div>
-
+                                            placeholder="Units"  :value="selectedProduct.stock" readonly>
+                                    </div> -->
                                     <div class="col-md-1 col-6">
                                         <label for="unitPrice" class="form-label">Price</label>
                                         <input type="number" steps="any" id="unitPrice" class="form-control"
-                                            placeholder="Price">
+                                            placeholder="Price" v-model="selectedProduct.price">
                                     </div>
-
                                     <div class="col-md-2 col-6">
                                         <label for="quantity" class="form-label">Quantity</label>
-                                        <input type="number" id="quantity" class="form-control" placeholder="Qty"
-                                            value="1" min="1">
+                                        <input type="number" id="quantity" @input="validateQuantity(selectedProduct)" 
+                                            class="form-control" placeholder="Qty"
+                                            value="1" min="1" v-model="selectedProduct.quantity">
                                     </div>
 
-                                    <div class="col-md-2 col-12 text-end">
-                                        <button class="btn btn-primary w-100" id="add_item">Add Item</button>
-                                    </div>
+                                    <div class="col-md-2 col-12 text-end mt-4">
+                                        <button class="btn btn-primary w-100" id="add_item" @click="addItem"> Add Item</button>
+                                    </div>    
                                 </div>
 
                                 <div class="tab-content mt-3">
                                     <div class="tab-pane fade show active" id="purchase" role="tabpanel">
-                                        <table class="table table-bordered" id="items-table">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>No</th>
-                                                    <th>Qty</th>
-                                                    <th>Product</th>
-                                                    <th>U.Price</th>
-                                                    <th>Total</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="products">
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>2</td>
-                                                    <td>Laptop</td>
-                                                    <td>1200.00</td>
-                                                    <td>2400.00</td>
-                                                    <td><button class="btn btn-sm btn-danger">Remove</button></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>1</td>
-                                                    <td>Mouse</td>
-                                                    <td>25.00</td>
-                                                    <td>25.00</td>
-                                                    <td><button class="btn btn-sm btn-danger">Remove</button></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                            <product-table :tableObj="sale"></product-table>    
                                     </div>
                                 </div>
+
 
                                 <div class="row mt-3">
                                     <div class="col-md-6 col-12 mb-3">
@@ -99,79 +58,18 @@
                                             <p class="mb-2 totals_text">
                                                 <strong>Grand Total: </strong>
                                                 <span id="grand-amount"
-                                                    class="text-dark font-weight-bold">2425.00</span>
+                                                    class="text-dark font-weight-bold">{{ totalAmount }}</span>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between mt-4">
-                                    <button class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#customerModal" @click="handleAddItemClick">Sell</button>
+                                    <button class="btn btn-primary" data-toggle="modal"
+                                        data-target="#customerModal" @click="openCustomerModal">Sell</button>
                                 </div>
 
-                                <div class="modal fade" id="customerModal" tabindex="-1"
-                                    aria-labelledby="customerModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header ">
-                                                <h5 class="modal-title " id="customerModalLabel">Customer Information
-                                                </h5>
-                                                <button type="button" class="btn-close btn-close-white"
-                                                    data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label for="customerName" class="form-label">Customer Name</label>
-                                                    <input type="text" class="form-control" id="customerName"
-                                                        placeholder="Enter customer name" value="John Doe">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="customerPhone" class="form-label">Phone Number</label>
-                                                    <input type="text" class="form-control" id="customerPhone"
-                                                        placeholder="Enter phone number" value="+1234567890">
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="paymentMethod" class="form-label">Payment Method</label>
-                                                    <select class="form-select" id="paymentMethod" ref="paymentMethod">
-                                                        <option value="cash">Cash</option>
-                                                        <option value="card">Card</option>
-                                                        <option value="bank_transfer">Bank Transfer</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3" id="cardDetails" ref="cardDetails">
-                                                    <div class="row">
-                                                        <div class="col-md-12 mb-3">
-                                                            <label for="cardNumber" class="form-label">Card Number</label>
-                                                            <input type="text" class="form-control" id="cardNumber"
-                                                                placeholder="Enter card number" value="**** **** **** 4242">
-                                                        </div>
-                                                        <div class="col-md-6 mb-3">
-                                                            <label for="expiryDate" class="form-label">Expiry Date</label>
-                                                            <input type="text" class="form-control" id="expiryDate"
-                                                                placeholder="MM/YY">
-                                                        </div>
-                                                        <div class="col-md-6 mb-3">
-                                                            <label for="cvc" class="form-label">CVC</label>
-                                                            <input type="text" class="form-control" id="cvc"
-                                                                placeholder="CVC" maxlength="3">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Amount to Pay</label>
-                                                    <input type="text" class="form-control" value="2425.00" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancel</button>
-                                                <button type="button" class="btn btn-success" id="confirmSale"
-                                                    ref="confirmSale">Confirm Sale</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                               <customer-modal v-if="is_customer_modal" :sale="sale" @close-modal="closeModal"></customer-modal>
                             </div>
                         </div>
                     </div>
@@ -186,36 +84,130 @@ export default {
     name: "SalePanel",
     data() {
         return {
-            is_category_form_modal: false,
-            modal_type: "",
-            obj_id: null,
+            is_barcode_mode:false,
+            is_customer_modal:false,
+            products:[],
+            label:'',
+            selectedProduct:this.setDefault(),
+            sale:this.setDefaultSale()
         };
     },
     methods: {
-        handlePaymentMethodChange() {
-            this.$refs.cardDetails.style.display = this.$refs.paymentMethod.value === 'card' ? 'block' : 'none';
+        validateQuantity(item) {
+            if (item.quantity > item.stock) {
+                item.quantity = item.stock; // Restrict to stock
+            }
         },
-        confirmSale() {
-            alert('Sale confirmed successfully!');
-            const modal = bootstrap.Modal.getInstance(document.getElementById('customerModal'));
-            modal.hide();
+        openCustomerModal(){
+            this.is_customer_modal=true;
         },
-        handleAddItemClick() {
-            const modal = new bootstrap.Modal(document.getElementById('customerModal'));
-            modal.show();
+        getSelectedProduct(product){
+            this.label = product.name
+            this.selectedProduct = {...product}
+        },
+        addItem(){
+            if(this.selectedProduct && this.selectedProduct.quantity > 0){
+                 const existingProduct = this.sale.items.find(
+                    item => item.id === this.selectedProduct.id 
+                );
+                if(existingProduct){
+                   if (existingProduct.quantity + this.selectedProduct.quantity <= this.selectedProduct.stock) {
+                        existingProduct.quantity += this.selectedProduct.quantity;
+                        existingProduct.price += this.selectedProduct.price; 
+                        existingProduct.amount += this.selectedProduct.quantity * this.selectedProduct.price;
+                    } else {
+                        this.errorToast("Not enough stock available!");
+                    }
+                }
+                else{
+                    const updateProduct = {
+                           id: this.selectedProduct.id,
+                           name: this.selectedProduct.name,
+                           quantity:this.selectedProduct.quantity,
+                           stock:this.selectedProduct.stock,
+                           price: this.selectedProduct.price,
+                           amount:this.selectedProduct.quantity * this.selectedProduct.price,
+                           isEditingQuantity: false,
+                           isEditingPrice: false,
+                       };
+                   this.sale.items.push(updateProduct);
+                }
+               this.selectedProduct = this.setDefault()
+               this.label = ''
+            }
+            else{
+                this.infoToast('Select the Product')
+            }
+        },
+        setDefault(){
+            return {
+                id: '',
+                name: '',
+                price: '',
+                quantity: '',
+                code:'',
+                stock:''
+            }
+        },
+        setDefaultSale(){
+            return {
+                id: '',
+                amount: '',
+                items:[],
+                customer:{
+                    name:'',
+                    phone:'',
+                    email:'',
+                    payment_method:'cash'
+                }
+            }
         },
         closeModal() {
-            this.is_category_form_modal = false;
-        }
+            this.is_customer_modal = false;
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open");
+            this.sale = this.setDefaultSale();
+            this.getProducts();
+        },
+        getProducts() {
+            this.data_loading = true;
+            axios({
+                url: `/admin/get/optimized/products`,
+                method: "GET",
+            })
+                .then((response) => {
+                    this.data_loading = false;
+                    this.products = response.data.map((product) => ({
+                        ...product,
+                        isVisible: ["code", "name"],
+                    }));
+                })
+                .catch((error) => {
+                    this.errorToast(error.response.error);
+                });
+        },
     },
     mounted() {
-        this.$refs.paymentMethod.addEventListener('change', this.handlePaymentMethodChange);
-        this.$refs.confirmSale.addEventListener('click', this.confirmSale);
-        this.$refs.cardDetails.style.display = 'none';
+        this.getProducts()
     },
-    beforeUnmount() {
-        this.$refs.paymentMethod.removeEventListener('change', this.handlePaymentMethodChange);
-        this.$refs.confirmSale.removeEventListener('click', this.confirmSale);
+    computed: {
+        totalAmount() {
+            return this.sale?.items
+                ? this.sale.items
+                    .filter((obj) => obj.amount)
+                    .reduce(
+                    (acc, item) =>
+                        acc + item.amount,
+                    0
+                    )
+                    .toFixed(2)
+                : "0.00";
+            },
+    },
+    watch:{
+        totalAmount(val){
+            this.sale.amount=parseFloat(val);
+        }
     }
 };
 </script>
