@@ -8709,10 +8709,7 @@ vue__WEBPACK_IMPORTED_MODULE_0__.default.component('role-form-modal', __webpack_
 vue__WEBPACK_IMPORTED_MODULE_0__.default.component('permission-form-modal', __webpack_require__(/*! ./components/roles/PermissionFormModal.vue */ "./resources/js/components/roles/PermissionFormModal.vue").default); // .................................Products Components..................................................
 
 vue__WEBPACK_IMPORTED_MODULE_0__.default.component('products', __webpack_require__(/*! ./components/products/Products.vue */ "./resources/js/components/products/Products.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component('product-form-modal', __webpack_require__(/*! ./components/products/ProductFormModal.vue */ "./resources/js/components/products/ProductFormModal.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component("roles", __webpack_require__(/*! ./components/roles/Roles.vue */ "./resources/js/components/roles/Roles.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component("role-form-modal", __webpack_require__(/*! ./components/roles/RoleFormModal.vue */ "./resources/js/components/roles/RoleFormModal.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component("permission-form-modal", __webpack_require__(/*! ./components/roles/PermissionFormModal.vue */ "./resources/js/components/roles/PermissionFormModal.vue").default); //.........................................................................
+vue__WEBPACK_IMPORTED_MODULE_0__.default.component('product-form-modal', __webpack_require__(/*! ./components/products/ProductFormModal.vue */ "./resources/js/components/products/ProductFormModal.vue").default); //.........................................................................
 //                        General Components
 //.........................................................................
 
@@ -22615,7 +22612,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.module-checkbox[data-v-52c2cde6] {\n  display: inline-block;\n  width: 25%; /* Set the width to display four checkboxes per line */\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.module-checkbox[data-v-52c2cde6] {\r\n  display: inline-block;\r\n  width: 25%; /* Set the width to display four checkboxes per line */\n}\r\n\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
