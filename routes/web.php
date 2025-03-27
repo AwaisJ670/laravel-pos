@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Product\ProductController;
+use App\Http\Controllers\Admin\Category\CategoryController;
 use App\Http\Controllers\Admin\Role\RolesController;
 use App\Http\Controllers\Admin\User\UserController;
 /*
@@ -20,11 +21,11 @@ Route::get('/', [AuthController::class, 'loginPage'])->name('login-page');
 // login request
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::get('/phpinfo', function(){
+Route::get('/phpinfo', function () {
     return phpinfo();
 });
 
-Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
+Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     // logout
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -41,7 +42,7 @@ Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
     Route::get('/users/get/data', [UserController::class, 'getUsers']);
     Route::get('/get/roles', [UserController::class, 'getRoles']);
 
-     //user profile
+    //user profile
     Route::get('/user-profile', [AuthController::class, 'userProfilePage'])->name('user-profile');
     Route::post('/user-profile/update', [AuthController::class, 'userProfileUpdate']);
 
@@ -56,6 +57,10 @@ Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
 
     Route::resource('products', ProductController::class)->except(['index']);
     Route::get('products', [ProductController::class, 'index'])->middleware('module.check');
+
+    Route::resource('categories', CategoryController::class)->except(['index']);
+    Route::get('categories', [CategoryController::class, 'index'])->middleware('module.check');
+    Route::get('/categories/get/server/data', [CategoryController::class, 'getServerData']);
 
 
 });
