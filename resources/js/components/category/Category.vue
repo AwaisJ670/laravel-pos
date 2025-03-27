@@ -34,7 +34,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(category, index) in filteredCategories" :key="category.id">
+                                        <tr v-for="category in filteredCategories" :key="category.id">
                                             <td>{{ category.id }}</td>
                                             <td>{{ category.name }}</td>
                                             <td class="align-middle text-right"> 
@@ -60,11 +60,6 @@
                                                             <i class="fas fa-edit px-3"></i>Edit
                                                         </button>
                                                     </div>
-                                                    <button type="button"
-                                                        class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left text-danger"
-                                                        @click="deleteCategory(category.id,index)">
-                                                        <i class="fas fa-trash px-3 text-danger"></i> Delete
-                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -108,11 +103,6 @@ export default {
             this.obj_id = id;
             this.is_category_form_modal = true;
         },
-        deleteCategory(categoryId,index) {
-            this.deleteConfirmationAlert(`/admin/categories/${categoryId}`,()=>{
-                this.categories.splice(index,1)
-            })
-        },
         closeModal(category) {
             if (this.is_category_form_modal) {
                 if (this.modal_type == "add" && category) {
@@ -133,7 +123,7 @@ export default {
         },
         getCategories(){
             axios({
-                url: `/admin/categories/get/server/data`,
+                url: `/admin/get/categories`,
                 method: "GET",
             })
             .then((response) => {

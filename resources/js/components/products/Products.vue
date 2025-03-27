@@ -23,22 +23,42 @@
                                     <div class="col-12 mb-3">
                                         <div class="form-group">
                                             <label class="mb-0">Search</label>
-                                            <input type="text" class="form-control" v-model="search" />
+                                            <input type="text" class="form-control" placeholder="Search By Name" v-model="search" />
                                         </div>
                                     </div>
                                 </div>
                                 <table id="table" class="table table-sm table-sm table-hover">
                                     <thead>
                                         <tr>
-                                            <th class="w-rem-2">#</th>
-                                            <th>Role</th>
+                                            <th>#</th>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Stock</th>
                                             <th class="w-rem-5 text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(obj, index) in filterData" :key="index">
                                             <td>{{ index + 1 }}</td>
+                                            <td class="align-middle">
+                                                <img
+                                                :src="
+                                                    obj.image
+                                                    ? `/storage/products_images/${obj.image}`
+                                                    : '/images/dummy-product.png'
+                                                "
+                                                alt="Product Image"
+                                                width="30px"
+                                                height="30px"
+                                                class="shadow-lg rounded-circle border"
+                                                />
+                                            </td>
                                             <td>{{ obj.name }}</td>
+                                            <td>{{ obj.category ? obj.category.name : '' }}</td>
+                                            <td>{{ obj.price }}</td>
+                                            <td>{{ obj.stock }}</td>
                                             <td class="text-center table-action-buttons">
                                                 <button type="button" class="btn btn-xs dropdown-toggle dropdown-icon"
                                                     data-toggle="dropdown" aria-expanded="false" aria-haspopup="false"
@@ -52,14 +72,13 @@
                                                             <i class="fas fa-edit px-3"></i>Edit
                                                         </button>
                                                     </div>
-                                                    <!-- <div class="mb-2">
-                                                        <button type="button"
-                                                            class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left"
-                                                            data-toggle="modal" data-target="#permissionFormModal"
-                                                            @click="openPermissionModal('edit', obj.id)">
-                                                            <i class="fas fa-clipboard-list px-3"></i>Delete
+                                                    <div class="mb-2">
+                                                       <button type="button"
+                                                            class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left text-danger"
+                                                            @click="deleteProduct(obj.id,index)">
+                                                            <i class="fas fa-trash px-3 text-danger"></i> Delete
                                                         </button>
-                                                    </div> -->
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -81,7 +100,7 @@ export default {
     name: "products",
     data() {
         return {
-            roles: [],
+            products: [],
             obj_id: null,
             is_product_form_modal: false,
             modal_type: null,
@@ -95,14 +114,19 @@ export default {
             this.obj_id = id;
             this.is_product_form_modal = true;
         },
-        closeModal(role) {
+        deleteProduct(productId,index) {
+            this.deleteConfirmationAlert(`/admin/products/${productId}`,()=>{
+                this.products.splice(index,1)
+            })
+        },
+        closeModal(product) {
             if (this.is_product_form_modal) {
-                if (this.modal_type == "add" && role) {
-                    this.roles.push(role);
-                } else if (role) {
-                    const index = this.roles.findIndex((item) => item.id === role.id);
+                if (this.modal_type == "add" && product) {
+                    this.products.push(product);
+                } else if (product) {
+                    const index = this.products.findIndex((item) => item.id === product.id);
                     if (index !== -1) {
-                        Vue.set(this.roles, index, role);
+                        Vue.set(this.products, index, product);
                     }
                 }
                 this.is_product_form_modal = false;
@@ -113,15 +137,15 @@ export default {
             $(".modal-backdrop").remove();
             $("body").removeClass("modal-open");
         },
-        getData() {
+        getProducts() {
             this.data_loading = true;
             axios({
-                url: `/admin/roles/get/server/data`,
+                url: `/admin/get/products`,
                 method: "GET",
             })
                 .then((response) => {
                     this.data_loading = false;
-                    this.roles = response.data;
+                    this.products = response.data;
                 })
                 .catch((error) => {
                     this.errorToast(error.response.error);
@@ -132,7 +156,7 @@ export default {
         filterData() {
             let filterData = null;
             if (this.search !== "") {
-                filterData = this.roles.filter((obj) => {
+                filterData = this.products.filter((obj) => {
                     return this.search
                         .toLowerCase()
                         .split(" ")
@@ -141,12 +165,12 @@ export default {
 
                 return filterData;
             } else {
-                return this.roles;
+                return this.products;
             }
         },
     },
     mounted() {
-        this.getData();
+        this.getProducts();
     },
 };
 </script>

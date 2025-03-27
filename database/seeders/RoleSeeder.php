@@ -17,8 +17,8 @@ class RoleSeeder extends Seeder
     {
         Role::truncate();
         DB::table('roles')->insert([
-            array('name' => 'Admin','permissions' => '[1, 2,3,4,5]','status' => NULL,'is_active' => '1'),
-            array('name' => 'User','permissions' => '[]','status' => NULL,'is_active' => '1'),
+            array('name' => 'Admin','permissions' => '[1,2,3,4,5]','status' => NULL,'is_active' => '1'),
+            array('name' => 'Cashier','permissions' => '[1]','status' => NULL,'is_active' => '1'),
         ]);
     }
 }

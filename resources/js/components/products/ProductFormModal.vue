@@ -20,18 +20,101 @@
                                             @changed="onFileChange"
                                         ></drag-drop-form-image-component>
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="mb-0">
-                                                <span v-if="!$v.product.name.required">*</span>
-                                                Name</label>
-                                            <input
-                                                type="text"
-                                                placeholder="Name"
-                                                v-model="product.name"
-                                                required
-                                                :class="['form-control', {'is-invalid no-icon': (!$v.product.name.required)}]"
-                                            >
+                                    <div class="col-9">
+                                        <div class="form-row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="categorySelect" class=" ">
+                                                        Category
+                                                        <span v-if="!$v.product.category_id.required">*</span>
+                                                    </label>
+                                                    <treeselect :options="categories"
+                                                        :multiple="false" placeholder="Select Category"
+                                                        :show-count="true" v-model="product.category_id"
+                                                        :normalizer="normalizerProductCategories"
+                                                        :default-expand-level="1"
+                                                        >
+                                                    </treeselect>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="code">
+                                                        <span v-if="!$v.product.code.required">*</span>
+                                                        Barcode
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Barcode"
+                                                        v-model="product.code"
+                                                        required
+                                                        class="form-control"
+                                                        id="code"
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="name">
+                                                        <span v-if="!$v.product.name.required">*</span>
+                                                        Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="name"
+                                                        placeholder="Name"
+                                                        v-model="product.name"
+                                                        required
+                                                        class="form-control"
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label for="price">
+                                                        <span v-if="!$v.product.price.required">*</span>
+                                                        Price
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="price"
+                                                        placeholder="Price"
+                                                        v-model="product.price"
+                                                        required
+                                                        class="form-control"
+                                                    >
+                                                </div>
+                                            </div>
+                                            <div class="col-9">
+                                                <div class="form-group">
+                                                    <label for="Description">
+                                                        Description
+                                                    </label>
+                                                    <textarea
+                                                        type="text"
+                                                        id="Description"
+                                                        placeholder="Description"
+                                                        v-model="product.description"
+                                                        class="form-control"
+                                                        rows="2"
+                                                    ></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="Stock">
+                                                        Stock
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        id="Stock"
+                                                        placeholder="Stock"
+                                                        v-model="product.stock"
+                                                        required
+                                                        class="form-control"
+                                                    >
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -42,8 +125,7 @@
                                 class="btn btn-primary"
                                 :disabled="$v.$invalid || data_loading || crud_loading"
                             >
-                                <span v-if="modal_type === 'add' && !crud_loading">Create</span>
-                                <span v-if="modal_type === 'edit' && !crud_loading">Update</span>
+                               Save
                                 <span v-if="crud_loading" class="spinner-border spinner-border-sm"></span>
                             </button>
                         </div>
@@ -66,7 +148,7 @@ export default {
         return {
             product: {
                 name: '',
-                category_id:'',
+                category_id:null,
                 stock:0,
                 price:0,
                 code:'',
@@ -75,13 +157,22 @@ export default {
             },
             crud_loading: false,
             data_loading: false,
-            is_all_select: false,
-            formData: [],
+            categories: [],
+            normalizerProductCategories(node){
+                return {
+                    id: node.id,
+                    label: node.name,
+                };
+            }
         }
     },
     validations: {
         product: {
             name: {required},
+            code: {required},
+            category_id: {required},
+            price: {required},
+
         }
     },
     methods: {
@@ -98,13 +189,14 @@ export default {
             .then(response => {
                 this.successToast(response.data.message);
                 if(this.product.image instanceof File){
-                    this.uploadImage(response.data.product.id,type)
+                    this.uploadImage(response.data.product.id)
                 }else{
                     this.$emit('close-modal',response.data.product)
                 }
             })
             .catch(error => {
                 this.errorToast(error.response.error)
+                this.crud_loading = false;
             })
         },
         getDataForEdit() {
@@ -128,10 +220,10 @@ export default {
         onFileChange(data) {
             this.product.image = data.file;
         },
-        uploadImage(productId,type) {
+        uploadImage(productId) {
             this.crud_loading = true;
             axios({
-                url: `/pos/catalog/upload/product/image/${productId}`,
+                url: `/admin/upload/product/image/${productId}`,
                 method: 'POST',
                 data: this.makeImageFormData()
             })
@@ -139,7 +231,7 @@ export default {
                     this.crud_loading = false;
                     if(response.status == 200){
                         this.successToast(response.data.message)
-                        this.$emit('get-back',response.data.product);
+                        this.$emit('close-modal',response.data.product);
                     }
                 })
                 .catch(error => {
@@ -147,9 +239,23 @@ export default {
                     this.error = error.data.message;
                 });
         },
+        getCategories(){
+            axios({
+                url: `/admin/get/categories`,
+                method: "GET",
+            })
+            .then((response) => {
+                this.data_loading = false;
+                this.categories = response.data;
+            })
+            .catch((error) => {
+                this.errorToast(error.response.error);
+            });
+        },
     },
     mounted() {
         this.modal_type === 'edit' ? this.getDataForEdit() : null;
+        this.getCategories()
     }
 
 }
