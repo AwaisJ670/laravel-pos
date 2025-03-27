@@ -70,5 +70,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     // Sale
 
     Route::resource('sales', SaleController::class)->except(['index']);
-    
+
+
 });
