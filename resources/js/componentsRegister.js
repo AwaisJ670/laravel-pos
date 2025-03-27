@@ -64,8 +64,11 @@ Vue.component(
 //Category
 
 Vue.component(
-    "category",
+    "categories",
     require("./components/category/Category.vue").default
 );
 
-Vue.component("CategoryFormModal",require("./components/category/CategoryFormModal.vue").default);
+Vue.component(
+    "category-form-modal",
+    require("./components/category/CategoryFormModal.vue").default
+);

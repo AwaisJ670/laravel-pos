@@ -2,6 +2,6 @@
 @section('title') {{ 'Categories' }}@endsection
 @section('content')
     <div class="content-wrapper">
-       <category></category>
+       <categories></categories>
     </div>
 @endsection

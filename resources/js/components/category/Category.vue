@@ -29,25 +29,41 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Category</th>
-                                            <th class="w-rem-5 text-center">Action</th>
+                                            <th>Name</th>
+                                            <th class="w-rem-5 text-center" colspan="2">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(category, index) in categories" :key="index">
-                                            <td>{{ index + 1 }}</td>
+                                        <tr v-for="(category, index) in filteredCategories" :key="category.id">
+                                            <td>{{ category.id }}</td>
                                             <td>{{ category.name }}</td>
-                                            <td class="text-center">
-                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                            <td class="align-middle text-right"> 
+                                                <toggle-button :value="category.is_active" v-model="category.is_active"
+                                                        :labels="{
+                                                            checked: 'Active',
+                                                            unchecked: 'In-Active',
+                                                        }" :disabled="false" :width="65" :height="20" :sync="true" :fontSize="8" :color="{
+                                                    checked: '#018a14',
+                                                    unchecked: '#c70404',
+                                                }" @change="toggleActive(category.id)">
+                                            </toggle-button>
+                                        </td>
+                                            <td class="text-center pr-3">
+                                                <button class="btn btn-xs dropdown-toggle dropdown-icon"
                                                     data-toggle="dropdown"></button>
                                                 <div class="dropdown-menu">
-                                                    <button class="dropdown-item" data-toggle="modal"
-                                                        data-target="#categoryFormModal" 
-                                                        @click="openModal('edit', category)">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </button>
-                                                    <button class="dropdown-item text-danger" @click="deleteCategory(category)">
-                                                        <i class="fas fa-trash"></i> Delete
+                                                    <div class="mb-2">
+                                                        <button type="button"
+                                                            class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left"
+                                                            data-toggle="modal" data-target="#categoryFormModal"
+                                                            @click="openModal('edit', category.id)">
+                                                            <i class="fas fa-edit px-3"></i>Edit
+                                                        </button>
+                                                    </div>
+                                                    <button type="button"
+                                                        class="btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left text-danger"
+                                                        @click="deleteCategory(category.id,index)">
+                                                        <i class="fas fa-trash px-3 text-danger"></i> Delete
                                                     </button>
                                                 </div>
                                             </td>
@@ -60,36 +76,84 @@
                 </div>
             </div>
         </section>
-        <CategoryFormModal :mode="modalMode" :category="selectedCategory" />
+        <category-form-modal v-if="is_category_form_modal" :modal_type="modal_type" :obj_id="obj_id" @close-modal="closeModal">
+        </category-form-modal>
     </div>
 </template>
 
 <script>
-import CategoryFormModal from './CategoryFormModal.vue';
 
 export default {
-    name: "Category",
-    components: { CategoryFormModal },
+    name: "categories",
     data() {
         return {
             search: '',
-            categories: [
-                { id: 1, name: "Category 1" },
-                { id: 2, name: "Category 2" },
-                { id: 3, name: "Category 3" }
-            ],
-            modalMode: 'add',
-            selectedCategory: null
+            modal_type: 'add',
+            obj_id:'',
+            selectedCategory: null,
+            is_category_form_modal:false,
+            categories:[]
         };
     },
-    methods: {
-        openModal(mode, category = null) {
-            this.modalMode = mode;
-            this.selectedCategory = mode === 'edit' ? { ...category } : null;
-        },
-        deleteCategory(category) {
-            this.categories = this.categories.filter(c => c.id !== category.id);
+    computed: {
+        filteredCategories() {
+            return this.categories.filter(category => 
+                category.name.toLowerCase().includes(this.search.toLowerCase())
+            );
         }
+    },
+    methods: {
+        openModal(modal_type, id) {
+            this.modal_type = modal_type;
+            this.obj_id = id;
+            this.is_category_form_modal = true;
+        },
+        deleteCategory(categoryId,index) {
+            this.deleteConfirmationAlert(`/admin/categories/${categoryId}`,()=>{
+                this.categories.splice(index,1)
+            })
+        },
+        closeModal(category) {
+            if (this.is_category_form_modal) {
+                if (this.modal_type == "add" && category) {
+                    this.categories.push(category);
+                } else if (category) {
+                    const index = this.categories.findIndex((item) => item.id === category.id);
+                    if (index !== -1) {
+                        Vue.set(this.categories, index, category);
+                    }
+                }
+                this.is_category_form_modal = false;
+            } 
+            this.modal_type = null;
+            this.obj_id = null;
+
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open");
+        },
+        getCategories(){
+            axios({
+                url: `/admin/categories/get/server/data`,
+                method: "GET",
+            })
+            .then((response) => {
+                this.data_loading = false;
+                this.categories = response.data;
+            })
+            .catch((error) => {
+                this.errorToast(error.response.error);
+            });
+        },
+        toggleActive(id) {
+            axios.post(`/admin/categories/is-active/${id}`).then((response) => {
+                // Update the local state after successful toggle
+                this.successToast(response.data.message);
+            });
+        },
+    },
+    mounted(){
+        this.getCategories()
     }
 };
 </script>
+

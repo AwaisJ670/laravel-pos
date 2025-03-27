@@ -6093,13 +6093,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _CategoryFormModal_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CategoryFormModal.vue */ "./resources/js/components/category/CategoryFormModal.vue");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -6166,40 +6159,103 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: "Category",
-  components: {
-    CategoryFormModal: _CategoryFormModal_vue__WEBPACK_IMPORTED_MODULE_0__.default
-  },
+  name: "categories",
   data: function data() {
     return {
       search: '',
-      categories: [{
-        id: 1,
-        name: "Category 1"
-      }, {
-        id: 2,
-        name: "Category 2"
-      }, {
-        id: 3,
-        name: "Category 3"
-      }],
-      modalMode: 'add',
-      selectedCategory: null
+      modal_type: 'add',
+      obj_id: '',
+      selectedCategory: null,
+      is_category_form_modal: false,
+      categories: []
     };
   },
-  methods: {
-    openModal: function openModal(mode) {
-      var category = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      this.modalMode = mode;
-      this.selectedCategory = mode === 'edit' ? _objectSpread({}, category) : null;
-    },
-    deleteCategory: function deleteCategory(category) {
-      this.categories = this.categories.filter(function (c) {
-        return c.id !== category.id;
+  computed: {
+    filteredCategories: function filteredCategories() {
+      var _this = this;
+
+      return this.categories.filter(function (category) {
+        return category.name.toLowerCase().includes(_this.search.toLowerCase());
       });
     }
+  },
+  methods: {
+    openModal: function openModal(modal_type, id) {
+      this.modal_type = modal_type;
+      this.obj_id = id;
+      this.is_category_form_modal = true;
+    },
+    deleteCategory: function deleteCategory(categoryId, index) {
+      var _this2 = this;
+
+      this.deleteConfirmationAlert("/admin/categories/".concat(categoryId), function () {
+        _this2.categories.splice(index, 1);
+      });
+    },
+    closeModal: function closeModal(category) {
+      if (this.is_category_form_modal) {
+        if (this.modal_type == "add" && category) {
+          this.categories.push(category);
+        } else if (category) {
+          var index = this.categories.findIndex(function (item) {
+            return item.id === category.id;
+          });
+
+          if (index !== -1) {
+            Vue.set(this.categories, index, category);
+          }
+        }
+
+        this.is_category_form_modal = false;
+      }
+
+      this.modal_type = null;
+      this.obj_id = null;
+      $(".modal-backdrop").remove();
+      $("body").removeClass("modal-open");
+    },
+    getCategories: function getCategories() {
+      var _this3 = this;
+
+      axios({
+        url: "/admin/categories/get/server/data",
+        method: "GET"
+      }).then(function (response) {
+        _this3.data_loading = false;
+        _this3.categories = response.data;
+      })["catch"](function (error) {
+        _this3.errorToast(error.response.error);
+      });
+    },
+    toggleActive: function toggleActive(id) {
+      var _this4 = this;
+
+      axios.post("/admin/categories/is-active/".concat(id)).then(function (response) {
+        // Update the local state after successful toggle
+        _this4.successToast(response.data.message);
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.getCategories();
   }
 });
 
@@ -6216,6 +6272,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 //
 //
 //
@@ -6250,45 +6307,77 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'CategoryFormModal',
-  props: {
-    mode: String,
-    category: Object
-  },
+  name: 'category-form-modal',
+  props: ['modal_type', 'obj_id'],
   data: function data() {
     return {
       form_data: {
         name: ''
-      }
+      },
+      crud_loading: false,
+      data_loading: false,
+      is_all_select: false,
+      formData: []
     };
   },
-  watch: {
-    category: {
-      handler: function handler(newVal) {
-        if (newVal) {
-          this.form_data = {
-            name: newVal.name || ''
-          };
-        } else {
-          this.form_data = {
-            name: ''
-          };
-        }
-      },
-      immediate: true
+  validations: {
+    form_data: {
+      name: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__.required
+      }
     }
   },
   methods: {
-    saveCategory: function saveCategory() {
-      if (this.mode === 'edit') {
-        alert('Category updated successfully!');
-      } else {
-        alert('Category created successfully!');
-      }
+    save: function save() {
+      var _this = this;
 
-      $('#categoryFormModal').modal('hide');
+      this.crud_loading = true;
+      var url = this.modal_type === 'add' ? "/admin/categories" : "/admin/categories/".concat(this.obj_id);
+      var method = this.modal_type === 'add' ? 'POST' : 'PUT';
+      axios({
+        url: url,
+        method: method,
+        data: this.form_data
+      }).then(function (response) {
+        _this.successToast(response.data.message);
+
+        _this.$emit('close-modal', response.data.category);
+      })["catch"](function (error) {
+        _this.errorToast(error.response.error);
+      });
+    },
+    getDataForEdit: function getDataForEdit() {
+      var _this2 = this;
+
+      axios({
+        url: "/admin/categories/".concat(this.obj_id, "/edit"),
+        method: 'GET'
+      }).then(function (response) {
+        _this2.form_data = response.data;
+      })["catch"](function (error) {
+        _this2.errorToast(error.response.error);
+      });
     }
+  },
+  mounted: function mounted() {
+    this.modal_type === 'edit' ? this.getDataForEdit() : null;
   }
 });
 
@@ -8284,8 +8373,8 @@ vue__WEBPACK_IMPORTED_MODULE_0__.default.component("drag-drop-form-image-compone
 
 vue__WEBPACK_IMPORTED_MODULE_0__.default.component("pagination-component", __webpack_require__(/*! ./components/util/PaginationComponent.vue */ "./resources/js/components/util/PaginationComponent.vue").default); //Category
 
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component("category", __webpack_require__(/*! ./components/category/Category.vue */ "./resources/js/components/category/Category.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__.default.component("CategoryFormModal", __webpack_require__(/*! ./components/category/CategoryFormModal.vue */ "./resources/js/components/category/CategoryFormModal.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_0__.default.component("categories", __webpack_require__(/*! ./components/category/Category.vue */ "./resources/js/components/category/Category.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_0__.default.component("category-form-modal", __webpack_require__(/*! ./components/category/CategoryFormModal.vue */ "./resources/js/components/category/CategoryFormModal.vue").default);
 
 /***/ }),
 
@@ -66773,54 +66862,108 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "tbody",
-                      _vm._l(_vm.categories, function(category, index) {
-                        return _c("tr", { key: index }, [
-                          _c("td", [_vm._v(_vm._s(index + 1))]),
+                      _vm._l(_vm.filteredCategories, function(category, index) {
+                        return _c("tr", { key: category.id }, [
+                          _c("td", [_vm._v(_vm._s(category.id))]),
                           _vm._v(" "),
                           _c("td", [_vm._v(_vm._s(category.name))]),
                           _vm._v(" "),
-                          _c("td", { staticClass: "text-center" }, [
+                          _c(
+                            "td",
+                            { staticClass: "align-middle text-right" },
+                            [
+                              _c("toggle-button", {
+                                attrs: {
+                                  value: category.is_active,
+                                  labels: {
+                                    checked: "Active",
+                                    unchecked: "In-Active"
+                                  },
+                                  disabled: false,
+                                  width: 65,
+                                  height: 20,
+                                  sync: true,
+                                  fontSize: 8,
+                                  color: {
+                                    checked: "#018a14",
+                                    unchecked: "#c70404"
+                                  }
+                                },
+                                on: {
+                                  change: function($event) {
+                                    return _vm.toggleActive(category.id)
+                                  }
+                                },
+                                model: {
+                                  value: category.is_active,
+                                  callback: function($$v) {
+                                    _vm.$set(category, "is_active", $$v)
+                                  },
+                                  expression: "category.is_active"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-center pr-3" }, [
                             _c("button", {
                               staticClass:
-                                "btn btn-sm btn-outline-secondary dropdown-toggle",
+                                "btn btn-xs dropdown-toggle dropdown-icon",
                               attrs: { "data-toggle": "dropdown" }
                             }),
                             _vm._v(" "),
                             _c("div", { staticClass: "dropdown-menu" }, [
-                              _c(
-                                "button",
-                                {
-                                  staticClass: "dropdown-item",
-                                  attrs: {
-                                    "data-toggle": "modal",
-                                    "data-target": "#categoryFormModal"
-                                  },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.openModal("edit", category)
+                              _c("div", { staticClass: "mb-2" }, [
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left",
+                                    attrs: {
+                                      type: "button",
+                                      "data-toggle": "modal",
+                                      "data-target": "#categoryFormModal"
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.openModal(
+                                          "edit",
+                                          category.id
+                                        )
+                                      }
                                     }
-                                  }
-                                },
-                                [
-                                  _c("i", { staticClass: "fas fa-edit" }),
-                                  _vm._v(
-                                    " Edit\n                                                "
-                                  )
-                                ]
-                              ),
+                                  },
+                                  [
+                                    _c("i", {
+                                      staticClass: "fas fa-edit px-3"
+                                    }),
+                                    _vm._v(
+                                      "Edit\n                                                    "
+                                    )
+                                  ]
+                                )
+                              ]),
                               _vm._v(" "),
                               _c(
                                 "button",
                                 {
-                                  staticClass: "dropdown-item text-danger",
+                                  staticClass:
+                                    "btn bg-transparent btn-block mb-2 pl-0 ml-0 btn-flat text-left text-danger",
+                                  attrs: { type: "button" },
                                   on: {
                                     click: function($event) {
-                                      return _vm.deleteCategory(category)
+                                      return _vm.deleteCategory(
+                                        category.id,
+                                        index
+                                      )
                                     }
                                   }
                                 },
                                 [
-                                  _c("i", { staticClass: "fas fa-trash" }),
+                                  _c("i", {
+                                    staticClass: "fas fa-trash px-3 text-danger"
+                                  }),
                                   _vm._v(
                                     " Delete\n                                                "
                                   )
@@ -66840,9 +66983,12 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c("CategoryFormModal", {
-        attrs: { mode: _vm.modalMode, category: _vm.selectedCategory }
-      })
+      _vm.is_category_form_modal
+        ? _c("category-form-modal", {
+            attrs: { modal_type: _vm.modal_type, obj_id: _vm.obj_id },
+            on: { "close-modal": _vm.closeModal }
+          })
+        : _vm._e()
     ],
     1
   )
@@ -66856,9 +67002,13 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("#")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Category")]),
+        _c("th", [_vm._v("Name")]),
         _vm._v(" "),
-        _c("th", { staticClass: "w-rem-5 text-center" }, [_vm._v("Action")])
+        _c(
+          "th",
+          { staticClass: "w-rem-5 text-center", attrs: { colspan: "2" } },
+          [_vm._v("Action")]
+        )
       ])
     ])
   }
@@ -66901,13 +67051,14 @@ var render = function() {
       },
       [
         _c("div", { staticClass: "modal-dialog" }, [
+          _vm._v("\n            " + _vm._s(_vm.obj_id) + "\n            "),
           _c(
             "form",
             {
               on: {
                 submit: function($event) {
                   $event.preventDefault()
-                  return _vm.saveCategory.apply(null, arguments)
+                  return _vm.save.apply(null, arguments)
                 }
               }
             },
@@ -66916,16 +67067,34 @@ var render = function() {
                 _c("div", { staticClass: "modal-header align-items-center" }, [
                   _c(
                     "h3",
-                    { staticClass: "card-title text-bold text-capitalize" },
-                    [
-                      _vm._v(
-                        _vm._s(_vm.mode === "edit" ? "Edit" : "Create") +
-                          " Category"
-                      )
-                    ]
+                    {
+                      staticClass:
+                        "card-title text-bold text-capitalize form-title"
+                    },
+                    [_vm._v(_vm._s(_vm.modal_type) + " Category")]
                   ),
                   _vm._v(" "),
-                  _vm._m(0)
+                  _c(
+                    "button",
+                    {
+                      staticClass: "close",
+                      attrs: {
+                        type: "button",
+                        "data-dismiss": "modal",
+                        "aria-label": "Close"
+                      },
+                      on: {
+                        click: function($event) {
+                          return _vm.$emit("close-modal")
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { attrs: { "aria-hidden": "true" } }, [
+                        _vm._v("×")
+                      ])
+                    ]
+                  )
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "modal-body" }, [
@@ -66934,7 +67103,12 @@ var render = function() {
                       _c("div", { staticClass: "col-12" }, [
                         _c("div", { staticClass: "form-group" }, [
                           _c("label", { staticClass: "mb-0" }, [
-                            _vm._v("Category Name:")
+                            !_vm.$v.form_data.name.required
+                              ? _c("span", [_vm._v("*")])
+                              : _vm._e(),
+                            _vm._v(
+                              "\n                                            Name"
+                            )
                           ]),
                           _vm._v(" "),
                           _c("input", {
@@ -66946,10 +67120,16 @@ var render = function() {
                                 expression: "form_data.name"
                               }
                             ],
-                            staticClass: "form-control",
+                            class: [
+                              "form-control",
+                              {
+                                "is-invalid no-icon": !_vm.$v.form_data.name
+                                  .required
+                              }
+                            ],
                             attrs: {
                               type: "text",
-                              placeholder: "Enter category name",
+                              placeholder: "Name",
                               required: ""
                             },
                             domProps: { value: _vm.form_data.name },
@@ -66980,12 +67160,23 @@ var render = function() {
                       "button",
                       {
                         staticClass: "btn btn-primary",
-                        attrs: { type: "submit" }
+                        attrs: {
+                          type: "submit",
+                          disabled:
+                            _vm.$v.$invalid ||
+                            _vm.data_loading ||
+                            _vm.crud_loading
+                        }
                       },
                       [
                         _vm._v(
-                          _vm._s(_vm.mode === "edit" ? "Update" : "Create")
-                        )
+                          "\n                        Save\n                            "
+                        ),
+                        _vm.crud_loading
+                          ? _c("span", {
+                              staticClass: "spinner-border spinner-border-sm"
+                            })
+                          : _vm._e()
                       ]
                     )
                   ]
@@ -66998,21 +67189,7 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "close",
-        attrs: { type: "button", "data-dismiss": "modal" }
-      },
-      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
