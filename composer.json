@@ -8,6 +8,7 @@
         "php": "^7.3|^8.0",
         "codebider/generate-crud": "^0.0.1",
         "doctrine/dbal": "^3.6",
+        "barryvdh/laravel-dompdf": "^2.2",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "google/apiclient": "*",

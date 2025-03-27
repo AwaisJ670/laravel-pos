@@ -172,6 +172,7 @@ export default {
             code: {required},
             category_id: {required},
             price: {required},
+            stock: {required},
 
         }
     },

@@ -6793,6 +6793,9 @@ __webpack_require__.r(__webpack_exports__);
       },
       price: {
         required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__.required
+      },
+      stock: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__.required
       }
     }
   },

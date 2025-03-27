@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Sale;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Category;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller
@@ -83,5 +84,12 @@ class SaleController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    
+    public function invoice(){
+
+        $pdf = Pdf::loadView('pdf.invoice');
+        return $pdf->download('invoice.pdf');
     }
 }
