@@ -30,15 +30,7 @@ Vue.component('permission-form-modal', require('./components/roles/PermissionFor
 // .................................Products Components..................................................
 Vue.component('products', require('./components/products/Products.vue').default);
 Vue.component('product-form-modal', require('./components/products/ProductFormModal.vue').default);
-Vue.component("roles", require("./components/roles/Roles.vue").default);
-Vue.component(
-    "role-form-modal",
-    require("./components/roles/RoleFormModal.vue").default
-);
-Vue.component(
-    "permission-form-modal",
-    require("./components/roles/PermissionFormModal.vue").default
-);
+
 
 //.........................................................................
 //                        General Components
