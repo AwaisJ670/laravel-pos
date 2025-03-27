@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Role\RolesController;
 use App\Http\Controllers\Admin\User\UserController;
 /*
@@ -52,6 +53,9 @@ Route::group(['middleware' => 'auth','prefix' => '/admin' ], function(){
     Route::post('/roles/update/is-active/{id}', [RolesController::class, 'updateIsActive']);
     Route::post('/roles/permissions/{groupId}', [RolesController::class, 'updateUserPermissions']);
     Route::post('/roles/permissions', [RolesController::class, 'saveUserPermissions']);
+
+    Route::resource('products', ProductController::class)->except(['index']);
+    Route::get('products', [ProductController::class, 'index'])->middleware('module.check');
 
 
 });
