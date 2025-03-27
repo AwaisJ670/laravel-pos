@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Category;
 
-use App\Http\Controllers\Controller;
-use App\Models\Admin\Category;
 use Illuminate\Http\Request;
+use App\Models\Admin\Category;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -36,12 +38,27 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $category = new Category();
-        $category->name = $request->name;
+        DB::beginTransaction();
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->messages()], 422);
+            }
 
-        $category->save();
+            $category = new Category();
+            $category->name = $request->name;
 
-        return response()->json(['message' => 'Category Added Successfully','category' => $category]);
+            $category->save();
+            DB::commit();   
+            return response()->json(['message' => 'Category Added Successfully','category' => $category]);
+        }
+        catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -76,13 +93,27 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $category = Category::findOrFail($id);
-        $category->name = $request->name;
-
-        $category->save();
-
-        return response()->json(['message' => 'Category Updated Successfully','category' => $category]);
+    {   
+        DB::beginTransaction();
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->messages()], 422);
+            }
+            $category = Category::findOrFail($id);
+            $category->name = $request->name;
+    
+            $category->save();
+            DB::commit();
+            return response()->json(['message' => 'Category Updated Successfully','category' => $category]);
+        }
+        catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['error' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -93,14 +124,10 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
-
-        $category->delete();
-
-        return response()->json(['message' => 'Category Deleted Successfully']);
+        //
     }
 
-    public function getServerData(){
+    public function getCategories(){
         $categories = Category::select('id','name','is_active')->get();
         return response()->json($categories);
     }

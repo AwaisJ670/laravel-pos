@@ -121,6 +121,6 @@ export default {
 </script>
 <style scoped>
     .sidebar-child-active{
-        background-color: purple;
+        background-color: green;
     }
 </style>

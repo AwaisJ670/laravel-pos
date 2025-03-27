@@ -2,7 +2,6 @@
     <div>
         <div class="modal fade" id="categoryFormModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog">
-                {{ obj_id }}
                 <form @submit.prevent="save">
                     <div class="modal-content">
                         <div class="modal-header align-items-center">
@@ -24,7 +23,7 @@
                                                 placeholder="Name"
                                                 v-model="form_data.name"
                                                 required
-                                                :class="['form-control', {'is-invalid no-icon': (!$v.form_data.name.required)}]"
+                                                class="form-control"
                                             >
                                         </div>
                                     </div>
@@ -61,8 +60,6 @@ export default {
             },
             crud_loading: false,
             data_loading: false,
-            is_all_select: false,
-            formData: [],
         }
     },
     validations: {
@@ -86,6 +83,7 @@ export default {
                 this.$emit('close-modal',response.data.category)
             })
             .catch(error => {
+                this.crud_loading = false;
                 this.errorToast(error.response.error)
             })
         },
