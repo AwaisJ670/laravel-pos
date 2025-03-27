@@ -58,8 +58,8 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
 
     Route::resource('products', ProductController::class)->except(['index']);
     Route::get('products', [ProductController::class, 'index'])->middleware('module.check');
-    Route::post('/upload/product/image/{id}',[ProductController::class,'uploadProductImage']);
-    Route::get('/get/products',[ProductController::class,'getProducts']);
+    Route::post('/upload/product/image/{id}', [ProductController::class, 'uploadProductImage']);
+    Route::get('/get/products', [ProductController::class, 'getProducts']);
 
     Route::resource('categories', CategoryController::class)->except(['index']);
     Route::get('categories', [CategoryController::class, 'index'])->middleware('module.check');
@@ -69,5 +69,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     // Sale
 
     Route::resource('sales', SaleController::class)->except(['index']);
-    
+
+
 });

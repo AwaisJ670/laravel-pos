@@ -24,16 +24,19 @@
 </head>
 <style>
     .pos-background {
-        background-image: url('https://images.unsplash.com/photo-1612153018787-4899c6e056d7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGdyZWVuJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        backdrop-filter: blur(15px);
-        height: 100vh;
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    background: 
+        linear-gradient(to bottom, rgba(52, 58, 64, 0.6), rgba(247, 247, 247, 0.6), rgba(255, 255, 255, 0.6)),
+        url('https://images.unsplash.com/photo-1612153018787-4899c6e056d7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGdyZWVuJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    backdrop-filter: blur(15px);
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 
     .box-alignment {
         height: 100vh;
@@ -140,7 +143,11 @@
         <div class="row">
             <div class="col-lg-6">
                 <div class="box-alignment align-items-center">
-                    <img id="sageBuddyImg" src="images/saggebuddy-logo.png" width="600px" />
+                    <div id="itPosText" class="text-center px-5 w-75">
+                        <h1 class="text-muted font-weight-normal">
+                          DEPT  IT POS
+                        </h1>
+                    </div>
                     <div class="text-center px-5 w-75">
                         <h5 class="text-muted font-weight-normal"><q>
                                 {{ config('theme.loginMessage') }}</q>
@@ -148,6 +155,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-lg-6 box-alignment">
                 <div class="login-container">
                     <div class="">
