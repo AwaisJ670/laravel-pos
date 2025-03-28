@@ -24,7 +24,7 @@
     },
     "dependencies": {
         "@riophae/vue-treeselect": "^0.4.0",
-        "chart.js": "^3.8.0",
+        "chart.js": "^3.9.1",
         "exceljs": "^4.3.0",
         "moment": "^2.29.1",
         "vue-chartjs": "^4.1.1",
