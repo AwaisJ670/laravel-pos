@@ -1,12 +1,13 @@
 <template>
     <div>
-        <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false"
+            data-backdrop="static">
             <div class="modal-dialog">
                 <form @submit.prevent="save">
                     <div class="modal-content">
                         <div class="modal-header align-items-center">
                             <h3 class="card-title text-bold text-capitalize form-title">Customer Information</h3>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
@@ -14,22 +15,23 @@
                             <div class="form-content pb-3">
                                 <div class="mb-3">
                                     <label for="customerName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="customerName"
-                                        placeholder="Name" v-model="sale.customer.name">
+                                    <input type="text" class="form-control" id="customerName" placeholder="Name"
+                                        v-model="sale.customer.name">
                                 </div>
                                 <div class="mb-3">
                                     <label for="customerEmail" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="customerEmail"
-                                        placeholder="Email" v-model="sale.customer.email">
+                                    <input type="email" class="form-control" id="customerEmail" placeholder="Email"
+                                        v-model="sale.customer.email">
                                 </div>
                                 <div class="mb-3">
                                     <label for="customerPhone" class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control" id="customerPhone"
-                                        placeholder="+1234567890" v-model="sale.customer.phone">
+                                    <input type="text" class="form-control" id="customerPhone" placeholder="+1234567890"
+                                        v-model="sale.customer.phone">
                                 </div>
                                 <div class="mb-3">
                                     <label for="paymentMethod" class="form-label">Payment Method</label>
-                                    <select class="form-control" id="paymentMethod" v-model="sale.customer.payment_method">
+                                    <select class="form-control" id="paymentMethod"
+                                        v-model="sale.customer.payment_method">
                                         <option value="cash">Cash</option>
                                         <option value="card">Card</option>
                                         <option value="bank_transfer">Bank Transfer</option>
@@ -44,13 +46,12 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="expiryDate" class="form-label">Expiry Date</label>
-                                            <input type="text" class="form-control" id="expiryDate"
-                                                placeholder="MM/YY">
+                                            <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="cvc" class="form-label">CVC</label>
-                                            <input type="text" class="form-control" id="cvc"
-                                                placeholder="CVC" maxlength="3">
+                                            <input type="text" class="form-control" id="cvc" placeholder="CVC"
+                                                maxlength="3">
                                         </div>
                                     </div>
                                 </div>
@@ -61,14 +62,10 @@
                             </div>
                         </div>
                         <div class="modal-footer border-top border-primary">
-                            <button type="button" 
-                                class="btn btn-secondary"
-                                data-dismiss="modal">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                 Cancel
                             </button>
-                            <button type="submit"
-                                class="btn btn-success"
-                            >
+                            <button type="submit" class="btn btn-success">
                                 Confirm Sale
                                 <span v-if="crud_loading" class="spinner-border spinner-border-sm"></span>
                             </button>
@@ -89,31 +86,34 @@ export default {
     ],
     data() {
         return {
-            crud_loading:false
+            crud_loading: false
         }
     },
     methods: {
         save() {
             this.crud_loading = true;
             axios({
-                url:`/admin/sales`,
+                url: `/admin/sales`,
                 method: 'POST',
                 data: this.sale
             })
-            .then(response => {
-                this.successToast('Sale recorded successfully');
-                this.$emit('close-modal')
-            })
-            .catch(error => {
-                this.errorToast(error.response.error)
-                this.crud_loading = false;
-            })
+                .then(response => {
+                    if (response.data && response.data.message) {
+                        this.successToast(response.data.message);
+                    } else {
+                        this.successToast("Successfully Orrder Completed");
+                    }
+
+                    this.$emit('close-modal')
+                })
+                .catch(error => {
+                    this.errorToast(error.response.error)
+                    this.crud_loading = false;
+                })
         },
     },
 
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
