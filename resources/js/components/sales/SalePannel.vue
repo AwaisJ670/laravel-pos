@@ -95,7 +95,7 @@ export default {
     methods: {
         validateQuantity(item) {
             if (item.quantity > item.stock) {
-                item.quantity = item.stock; // Restrict to stock
+                item.quantity = item.stock; 
             }
         },
         openCustomerModal(){
