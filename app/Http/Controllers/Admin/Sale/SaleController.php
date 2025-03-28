@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin\Sale;
 use App\Models\Admin\Sale;
 use Illuminate\Http\Request;
 use App\Models\Admin\Category;
+use App\Models\Admin\Product;
 use App\Models\Admin\Customer;
 use App\Models\Admin\Inventory;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class SaleController extends Controller
@@ -20,8 +22,11 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $sales = Sale::with('customer')->get();
+        return view('Admin.sale.index', [
+            'sales' => $sales
+        ]);
+    }   
 
     /**
      * Show the form for creating a new resource.
@@ -57,56 +62,58 @@ class SaleController extends Controller
         $authId = Auth::id();
 
         DB::beginTransaction();
-       try {
-        // Create customer
-        $customer = Customer::create([
-            'name' => $validatedData['customer']['name'],
-            'email' => $validatedData['customer']['email'] ?? null,
-            'phone' => $validatedData['customer']['phone'],
-            'payment_method' => $validatedData['customer']['payment_method'],
-        ]);
+        try {
+            // Create customer
+            $customer = Customer::create([
+                'name' => $validatedData['customer']['name'],
+                'email' => $validatedData['customer']['email'] ?? null,
+                'phone' => $validatedData['customer']['phone'],
+                'payment_method' => $validatedData['customer']['payment_method'],
+            ]);
 
-        // Create sale
-        $sale = Sale::create([
-            'customer_id' => $customer->id,
-            'amount' => $validatedData['amount'],
-            'user_id' => Auth::id(),
-        ]);
+            // Create sale
+            $sale = Sale::create([
+                'customer_id' => $customer->id,
+                'amount' => $validatedData['amount'],
+                'user_id' => Auth::id(),
+            ]);
 
-        $inventoryItems = [];
+            $inventoryItems = [];
 
-        foreach ($validatedData['items'] as $item) {
-            // Fetch product and check stock
-            $product = Product::find($item['id']);
+            foreach ($validatedData['items'] as $item) {
+                // Fetch product and check stock
+                $product = Product::find($item['id']);
 
-            if ($product->stock < $item['quantity']) {
-                throw new \Exception("Not enough stock for product: {$product->name}");
+                if ($product->stock < $item['quantity']) {
+                    throw new \Exception("Not enough stock for product: {$product->name}");
+                }
+
+                // Deduct stock
+                $product->decrement('stock', $item['quantity']);
+
+                // Add inventory record
+                $inventoryItems[] = [
+                    'sale_id' => $sale->id,
+                    'product_id' => $item['id'],
+                    'quantity' => (int) $item['quantity'],
+                    'price' => (float) $item['price'],
+                    'amount' => (float) $item['amount'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
             }
 
-            // Deduct stock
-            $product->decrement('stock', $item['quantity']);
+            // Bulk insert inventory records
+            Inventory::insert($inventoryItems);
 
-            // Add inventory record
-            $inventoryItems[] = [
-                'sale_id' => $sale->id,
-                'product_id' => $item['id'],
-                'quantity' => (int) $item['quantity'],
-                'price' => (float) $item['price'],
-                'amount' => (float) $item['amount'],
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
+            DB::commit();
 
-        // Bulk insert inventory records
-        Inventory::insert($inventoryItems);
-
-        DB::commit();
-        return response()->json(['message' => 'Sale recorded successfully'], 201);
-    } catch (\Exception $exception) {
-        DB::rollBack();
-        return response()->json(['error' => $exception->getMessage()], 500);
-    } catch (\Exception $exception) {
+            return redirect()->route('sale.invoice', ['id' => $sale->id]);
+            // return response()->json(['message' => 'Sale recorded successfully'], 201);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json(['error' => $exception->getMessage()], 500);
+        } catch (\Exception $exception) {
             DB::rollBack();
             return response()->json(['error' => $exception->getMessage()], 500);
         }
@@ -159,9 +166,19 @@ class SaleController extends Controller
         //
     }
 
-    public function invoice(){
+    public function invoice($id)
+    {
 
-        $pdf = Pdf::loadView('pdf.invoice');
+
+        $sale = Sale::where('id', $id)->first();
+        $inventoryItems = Inventory::with('product')->where('sale_id', $id)->get();
+        $customer = Customer::where('id', $sale->customer_id)->first();
+
+        $pdf = Pdf::loadView('pdf.invoice', [
+            'sale' => $sale,
+            'inventoryItems' => $inventoryItems,
+            'customer' => $customer
+        ]);
         return $pdf->download('invoice.pdf');
     }
 }

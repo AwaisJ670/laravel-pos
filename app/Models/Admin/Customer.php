@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
-    use HasFactory,softDeletes;
+    use HasFactory, softDeletes;
 
     protected $table = 'customers';
 
-    protected $fillable = ['name','phone','email','payment_method'];
+    protected $fillable = ['name', 'phone', 'email', 'payment_method'];
+
+    public function sale()
+    {
+        return $this->hasMany(Sale::class);
+    }
 }
