@@ -8,9 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model
 {
-    use HasFactory,softDeletes;
+    use HasFactory, softDeletes;
 
     protected $table = 'sales';
 
-    protected $fillable = ['user_id','customer_id','amount','returned_date'];
+    protected $fillable = ['user_id', 'customer_id', 'amount', 'returned_date'];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
 }

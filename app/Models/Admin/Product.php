@@ -9,13 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
 {
-    use HasFactory,softDeletes;
+    use HasFactory, softDeletes;
 
-    protected $table='products';
+    protected $table = 'products';
 
-    protected $fillable = ['name' , 'category_id','code','description','stock','price','is_active'];
+    protected $fillable = ['name', 'category_id', 'code', 'description', 'stock', 'price', 'is_active'];
 
-    public function category(){
-        return $this->belongsTo(Category::class,'category_id','id');
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    public function inventory()
+    {
+        return $this->hasMany(Inventory::class);
     }
 }

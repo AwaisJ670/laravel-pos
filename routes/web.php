@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
+use App\Http\Controllers\Admin\Dashboard\DashboardController;
 use App\Http\Controllers\Admin\Role\RolesController;
 use App\Http\Controllers\Admin\Sale\SaleController;
 use App\Http\Controllers\Admin\User\UserController;
@@ -30,7 +31,7 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
     // logout
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::view('/dashboard', 'dashboard')->name('dashboard')->middleware('module.check');
+    Route::get('/dashboard', [DashboardController::class,'index'])->name('dashboard')->middleware('module.check');
     Route::get('/welcome', [AuthController::class, 'afterLogin'])->name('afterLogin');
     //change password
     Route::get('/change-password', [AuthController::class, 'changePasswordPage'])->name('change-password');
@@ -58,9 +59,9 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
 
     Route::resource('products', ProductController::class)->except(['index']);
     Route::get('products', [ProductController::class, 'index'])->middleware('module.check');
-    Route::post('/upload/product/image/{id}',[ProductController::class,'uploadProductImage']);
-    Route::get('/get/products',[ProductController::class,'getProducts']);
-    Route::get('/get/optimized/products',[ProductController::class,'getOptimizedProducts']);
+    Route::post('/upload/product/image/{id}', [ProductController::class, 'uploadProductImage']);
+    Route::get('/get/products', [ProductController::class, 'getProducts']);
+    Route::get('/get/optimized/products', [ProductController::class, 'getOptimizedProducts']);
 
     Route::resource('categories', CategoryController::class)->except(['index']);
     Route::get('categories', [CategoryController::class, 'index'])->middleware('module.check');
@@ -69,7 +70,6 @@ Route::group(['middleware' => 'auth', 'prefix' => '/admin'], function () {
 
     // Sale
 
-    Route::resource('sales', SaleController::class)->except(['index']);
-
-
+    Route::resource('sales', SaleController::class);
+    Route::get('/invoice/{id}', [SaleController::class, 'invoice'])->name('sale.invoice');
 });

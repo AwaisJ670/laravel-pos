@@ -101,7 +101,7 @@ export default {
                 data: this.sale
             })
             .then(response => {
-                this.successToast(response.data.message);
+                this.successToast('Sale recorded successfully');
                 this.$emit('close-modal')
             })
             .catch(error => {

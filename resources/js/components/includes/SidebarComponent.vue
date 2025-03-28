@@ -5,7 +5,7 @@
             <a href="/dashboard" class="brand-link">
                 <span class="brand-text font-weight-light">
                     <!-- <img src="/images/logo.png" alt="Saver" class="brand-image"> -->
-                    <span class="brand-text">Starter Kit</span>
+                    <span class="brand-text">Dept IT POS</span>
                 </span>
             </a>
         </div>

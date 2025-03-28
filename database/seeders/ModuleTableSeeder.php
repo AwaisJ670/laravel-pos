@@ -25,6 +25,8 @@ class ModuleTableSeeder extends Seeder
             array('parent_id' => '0', 'name' => 'Products', 'route' => '/admin/products', 'head_name' => NULL, 'icon' => 'fas fa-tasks', 'order' => NULL, 'is_active' => '1'),
             array('parent_id' => '0', 'name' => 'Sales', 'route' => '/admin/sales', 'head_name' => NULL, 'icon' => 'fas fa-tasks', 'order' => NULL, 'is_active' => '1'),
             array('parent_id' => '7', 'name' => 'Add Sales', 'route' => '/admin/sales/create', 'head_name' => NULL, 'icon' => 'fas fa-tasks', 'order' => NULL, 'is_active' => '1'),
+            array('parent_id' => '7', 'name' => 'All Sales', 'route' => '/admin/sales', 'head_name' => NULL, 'icon' => 'fas fa-tasks', 'order' => NULL, 'is_active' => '1'),
+
             
 
         ]);

@@ -70,10 +70,7 @@ Vue.component(
     "pagination-component",
     require("./components/util/PaginationComponent.vue").default
 );
-Vue.component(
-    "search-bar",
-    require("./components/util/SearchBar.vue").default
-);
+Vue.component("search-bar", require("./components/util/SearchBar.vue").default);
 
 //Category
 
@@ -100,4 +97,11 @@ Vue.component(
 Vue.component(
     "customer-modal",
     require("./components/sales/CustomerModal.vue").default
+);
+
+Vue.component("sale-index", require("./components/sales/Index.vue").default);
+
+Vue.component(
+    "dashboard",
+    require("./components/dashboard/Dashboard.vue").default
 );
